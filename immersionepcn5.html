@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon magasin – Niveau 5 – CAP EPC – Isabelle LÉGER</title>
+<meta name="author" content="Isabelle LÉGER">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+  const NOM_ENSEIGNANTE = "Isabelle LÉGER";   // nom fixe
+  const CODE_PAR_DEFAUT = "EPC2026";         // code fixe de l'espace enseignante
+</script>
+<style>
+:root{
+  --teal:#0E5C63; --teal-d:#083E43; --yellow:#FFD43B; --yellow-d:#E8B800;
+  --tomato:#E5483B; --mint:#D9F2E6; --green:#1F8A4C; --bg:#EAF2F3; --ink:#17262A; --white:#fff; --line:#9BB8BB;
+  --title:"Fredoka","Trebuchet MS",Verdana,sans-serif;
+  --body:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:20px;line-height:1.5}
+button{font-family:inherit;font-size:inherit;cursor:pointer;color:var(--ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--yellow-d);outline-offset:3px}
+h1,h2,h3{font-family:var(--title);line-height:1.15;margin:0 0 .4em}
+h1{font-size:2rem} h2{font-size:1.65rem} h3{font-size:1.25rem}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 40px}
+
+.store-sign{background:var(--teal);color:var(--white);border-bottom:10px solid var(--yellow)}
+.store-sign .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.store-sign h1{margin:0}
+.store-sign .who{font-size:1rem}
+.awning{height:22px;background:repeating-linear-gradient(90deg,var(--tomato) 0 40px,var(--white) 40px 80px);border-radius:0 0 18px 18px;margin:0 6px}
+
+.btn{border:none;border-radius:14px;padding:14px 22px;font-weight:700;background:var(--teal);color:var(--white);min-height:56px}
+.btn:hover{background:var(--teal-d)}
+.btn.yellow{background:var(--yellow);color:var(--ink)} .btn.yellow:hover{background:var(--yellow-d)}
+.btn.ghost{background:var(--white);color:var(--teal);border:3px solid var(--teal)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.9rem}
+.speak{border:none;background:var(--yellow);border-radius:50%;width:50px;height:50px;font-size:1.4rem;flex:none}
+.speak:hover{background:var(--yellow-d)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.panel{background:var(--white);border-radius:20px;padding:24px;margin-top:22px}
+.consigne{display:flex;gap:14px;align-items:flex-start;background:var(--mint);border-radius:16px;padding:16px;margin-bottom:18px}
+.consigne p{margin:0}
+.saved{position:fixed;bottom:16px;right:16px;background:var(--green);color:#fff;padding:10px 18px;border-radius:30px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none}
+.saved.on{opacity:1}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;z-index:9;max-width:90%}
+
+.profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+.profile{background:var(--white);border:4px solid var(--teal);border-radius:20px;padding:22px;text-align:center}
+.profile .big{font-size:3rem}
+.profile input{width:100%;font:inherit;padding:12px;border-radius:12px;border:3px solid var(--line);margin:10px 0;text-align:center}
+
+/* Plan du magasin */
+.home-grid{display:grid;grid-template-columns:1fr 290px;gap:22px;margin-top:22px;align-items:start}
+@media (max-width:860px){.home-grid{grid-template-columns:1fr}}
+.zone{background:var(--white);border-radius:20px;padding:20px;margin-bottom:20px;border-left:12px solid var(--zc,var(--teal))}
+.zone h3{margin-bottom:2px} .zone .zd{margin:0 0 12px;color:#3E5559;font-size:1rem}
+.aisles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+.aisle{position:relative;background:var(--bg);border:none;border-radius:16px;padding:0 0 12px;text-align:left;overflow:hidden;border-bottom:7px solid #C9D7D9}
+.aisle:hover{background:#DCEBEC}
+.aisle .ico{font-size:2.3rem;padding:8px 12px 0}
+.aisle .lbl{padding:0 12px;font-weight:700;line-height:1.2}
+.aisle .st{padding:2px 12px 0;font-size:.85rem;color:#3E5559}
+.aisle.done{border-bottom-color:var(--green)}
+.aisle.done::after{content:"✔";position:absolute;top:10px;right:10px;background:var(--green);color:#fff;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+
+.card{background:linear-gradient(135deg,var(--teal),#147A82);color:#fff;border-radius:22px;padding:20px;position:sticky;top:12px}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}
+.stamp{aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.6);display:grid;place-items:center;font-size:1.1rem}
+.stamp.on{background:var(--yellow);border:2px solid var(--yellow);transform:rotate(-12deg)}
+.card .count{font-family:var(--title);font-size:1.4rem}
+.mybadge{background:var(--white);color:var(--ink);border-radius:14px;padding:10px;text-align:center;margin-top:10px;border-top:14px solid var(--bc,var(--tomato))}
+
+/* Quiz */
+.question{font-size:1.25rem;font-weight:700;margin-bottom:14px}
+.opts{display:grid;gap:12px}
+.opt{text-align:left;background:var(--white);border:3px solid var(--line);border-radius:14px;padding:14px 18px;min-height:60px}
+.opt:hover{border-color:var(--teal)}
+.opt.good{background:#D7F5E2;border-color:var(--green)}
+.opt.bad{background:#FBDAD6;border-color:var(--tomato)}
+.feedback{margin-top:14px;padding:14px;border-radius:14px;font-weight:700}
+.feedback.good{background:#D7F5E2} .feedback.bad{background:#FBDAD6} .feedback.info{background:#FFF4C4}
+.progress{height:14px;background:#D5E3E5;border-radius:10px;overflow:hidden;margin-bottom:18px}
+.progress div{height:100%;background:var(--yellow-d)}
+.bigcard{background:var(--bg);border-radius:20px;padding:26px;text-align:center;font-size:1.5rem;font-weight:700;margin-bottom:16px}
+.bigcard .e{font-size:3.5rem;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two .btn{font-size:1.15rem;min-height:72px}
+
+.missions{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.mission{background:var(--bg);border-radius:18px;padding:18px}
+.mission .ico{font-size:2.6rem}
+
+table.bl{width:100%;border-collapse:collapse;font-size:1.05rem}
+table.bl th{background:var(--teal);color:#fff;padding:10px;text-align:left}
+table.bl td{padding:0;border-bottom:2px solid #D5E3E5}
+table.bl td button{width:100%;text-align:left;background:none;border:none;padding:14px 10px;min-height:56px}
+table.bl tr.found td{background:#FBDAD6}
+table.bl tr.ok td{background:#E8F0F1}
+.tablebox{overflow-x:auto}
+
+.products{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.prod{background:var(--white);border:3px solid var(--line);border-radius:14px;padding:10px 14px;font-size:1.05rem;min-height:56px}
+.prod .e{font-size:1.6rem;margin-right:6px;vertical-align:middle}
+.prod.sel,.sel:not(.pcol){border-color:var(--yellow-d)!important;background:#FFF4C4!important;box-shadow:0 0 0 4px var(--yellow)}
+.shelves{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.shelf{background:var(--bg);border:none;border-radius:16px;padding:0 0 12px;min-height:150px;text-align:left;border-bottom:10px solid #8A6A4B}
+.shelf .sign{background:var(--teal);color:#fff;font-family:var(--title);padding:8px 12px;border-radius:16px 16px 0 0}
+.shelf .in{padding:8px 12px;font-size:1.7rem}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.today{display:inline-block;background:var(--tomato);color:#fff;padding:6px 14px;border-radius:10px;font-weight:700}
+.yogs{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.yog{background:var(--white);border:3px solid var(--line);border-radius:16px;padding:12px;width:150px;text-align:center}
+.yog .e{font-size:2.4rem}
+.yog .dlc{display:block;background:var(--ink);color:#fff;border-radius:8px;padding:4px;font-size:.95rem;margin-top:6px}
+.yog:disabled{opacity:.35;cursor:default}
+.slots{display:flex;gap:10px;flex-wrap:wrap}
+.slot{width:150px;min-height:110px;border:3px dashed var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:6px;background:var(--white)}
+.slot.fill{border-style:solid;border-color:var(--green);background:#D7F5E2}
+
+.ticket{background:#fff;border:2px dashed var(--line);border-radius:6px;padding:16px;max-width:360px;font-family:"Courier New",monospace}
+.ticket .tot{font-size:1.4rem;font-weight:700;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
+.money{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.bill{border:none;border-radius:8px;width:110px;height:62px;font-weight:700;font-size:1.2rem}
+.coin{border:none;border-radius:50%;width:70px;height:70px;font-weight:700;font-size:1rem}
+.c-gold{background:radial-gradient(circle at 35% 35%,#FCE79A,#D9B13B)}
+.c-copper{background:radial-gradient(circle at 35% 35%,#F2C29B,#B8743F)}
+.c-bi{background:radial-gradient(circle,#E4C35A 0 45%,#C9CDD1 46%)}
+.b5{background:#C9CDD1} .b10{background:#F0B6A8}
+.tray{background:var(--mint);border-radius:16px;padding:14px;min-height:70px}
+.tray .sum{font-family:var(--title);font-size:1.5rem}
+
+.smileys{display:flex;gap:12px;flex-wrap:wrap}
+.smiley{font-size:2.4rem;background:var(--white);border:3px solid var(--line);border-radius:16px;width:80px;height:80px}
+.chip{background:var(--white);border:3px solid var(--line);border-radius:30px;padding:10px 18px;min-height:52px}
+textarea{width:100%;min-height:110px;font:inherit;padding:12px;border-radius:12px;border:3px solid var(--line)}
+
+/* Tenue */
+.dress{display:grid;grid-template-columns:220px 1fr;gap:20px}
+@media (max-width:700px){.dress{grid-template-columns:1fr}}
+.mannequin{background:var(--bg);border-radius:20px;padding:16px;text-align:center;font-size:2.6rem;line-height:1.25}
+.mannequin small{display:block;font-size:.85rem;color:#3E5559}
+
+/* Jeux de mots */
+.word{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.word span{width:46px;height:58px;border-bottom:5px solid var(--teal);font-family:var(--title);font-size:2rem;display:grid;place-items:center;background:var(--bg);border-radius:8px 8px 0 0}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px}
+.key{height:52px;border:2px solid var(--line);background:var(--white);border-radius:10px;font-weight:700;font-size:1.2rem}
+.key:disabled{opacity:.3}
+.key.g{background:#D7F5E2;opacity:1;border-color:var(--green)}
+.basket{font-size:2rem;text-align:center;background:var(--mint);border-radius:16px;padding:8px}
+.letters{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.letter{width:58px;height:62px;border:3px solid var(--line);background:#FFF4C4;border-radius:12px;font-family:var(--title);font-size:1.8rem}
+.letter:disabled{opacity:.25}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:560px;margin:0 auto}
+@media (max-width:500px){.mem{grid-template-columns:repeat(3,1fr)}}
+.mcard{aspect-ratio:1;border:none;border-radius:14px;background:var(--teal);color:#fff;font-size:1.05rem;font-weight:700;padding:6px}
+.mcard.open{background:#FFF4C4;color:var(--ink)} .mcard.open .e{font-size:2.4rem}
+.mcard.done{background:#D7F5E2;color:var(--ink)}
+.ws{display:grid;gap:3px;max-width:520px;margin:0 auto;user-select:none}
+.ws button{aspect-ratio:1;border:1px solid #C9D7D9;background:var(--white);border-radius:6px;font-family:var(--title);font-size:clamp(.85rem,3.2vw,1.35rem);padding:0}
+.ws button.start{background:var(--yellow)}
+.ws button.f{background:#B9E8CB}
+.wl{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;justify-content:center}
+.wl span{background:var(--bg);padding:6px 12px;border-radius:20px;font-weight:700}
+.wl span.f{text-decoration:line-through;background:#D7F5E2}
+
+/* Erreurs du rayon */
+.gond{background:#8A6A4B;border-radius:16px;padding:10px;max-width:640px;margin:0 auto}
+.etage{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:#F3EDE4;padding:8px;border-bottom:8px solid #6B4F36;margin-bottom:8px}
+.etage button,.floor button{border:none;background:none;font-size:2rem;padding:4px;min-height:64px;border-radius:10px}
+.etage button small,.floor button small{display:block;font-size:.7rem;background:var(--yellow);border-radius:4px;font-weight:700}
+.etage button.hit,.floor button.hit{background:#FBDAD6;outline:3px solid var(--tomato)}
+.floor{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:4px 8px}
+
+/* Coloriage */
+.palette{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pcol{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.pcol.sel{box-shadow:0 0 0 5px var(--ink)}
+.colorbox{max-width:620px;margin:0 auto}
+.colorbox svg{width:100%;height:auto;background:#fff;border-radius:12px;border:3px solid var(--line)}
+.colorbox svg [data-r]{cursor:pointer}
+.svgline{pointer-events:none}
+
+.result{text-align:center}
+.result .stars{font-size:3.4rem;letter-spacing:.1em}
+.burst{position:fixed;pointer-events:none;font-size:2rem;animation:fly 1.4s ease-out forwards;z-index:10}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.shake,.burst{animation:none}}
+
+.tch table{width:100%;border-collapse:collapse;font-size:.95rem}
+.tch th,.tch td{border:1px solid #C9D7D9;padding:8px;text-align:left;vertical-align:top}
+.tch th{background:var(--teal);color:#fff}
+.tch tr.z td{background:var(--bg);font-weight:700}
+.tch details{margin-top:6px} .tch summary{cursor:pointer;color:var(--teal);font-weight:700}
+.tch input{font:inherit;padding:10px;border-radius:10px;border:3px solid var(--line)}
+.tch svg{width:160px;height:auto;border:1px solid #C9D7D9}
+#tlayer{position:fixed;inset:0;background:rgba(23,38,42,.65);z-index:20;overflow:auto;padding:20px}
+#tlayer .panel{max-width:1050px;margin:0 auto 20px}
+.stu{border:3px solid var(--line);background:var(--white);border-radius:12px;padding:8px 14px;font-weight:700}
+.stu.sel{border-color:var(--teal)!important;background:var(--mint)!important;box-shadow:none}
+.live{background:#FFF4C4;border-radius:8px;padding:4px 8px;display:inline-block;margin-top:4px}
+.etage button.back{opacity:.28;transform:scale(.6)}
+.etq{display:inline-block;background:#fff;border:3px solid var(--ink);border-radius:10px;padding:12px 18px;min-width:250px;margin-bottom:14px;text-align:left}
+.etq .nm{font-weight:700;font-size:1.1rem} .etq .px{font-family:var(--title);font-size:2.4rem;color:var(--tomato);line-height:1.1}
+.etq .old{text-decoration:line-through;color:#5B6C70;font-size:1.2rem} .etq .pu{font-size:.95rem} .etq .bc{letter-spacing:1px;font-size:.8rem;margin-top:6px}
+.balis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.bcard{background:#fff;border:3px solid var(--line);border-radius:14px;padding:10px;font-size:2.6rem;text-align:center}
+.bcard .mini{font-size:.9rem;background:#FFF4C4;border-radius:6px;padding:4px;margin-top:6px;min-height:46px}
+.bcard .mini.none{background:#eee;color:#5B6C70}
+.bcard.hit{border-color:var(--tomato);background:#FBDAD6}
+.cnt{display:grid;grid-template-columns:repeat(5,64px);gap:8px}
+.cnt button{font-size:2.1rem;height:64px;border:2px solid var(--line);background:#fff;border-radius:12px;position:relative;padding:0}
+.cnt button.c{background:#D7F5E2;border-color:var(--green)}
+.cnt button.c::after{content:"✔";position:absolute;top:-8px;right:-8px;background:var(--green);color:#fff;border-radius:50%;width:24px;height:24px;font-size:.8rem;display:grid;place-items:center}
+.rs{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.rs div{height:60px;border-radius:10px;display:grid;place-items:center;font-size:2rem;background:#fff;border:2px solid var(--line)}
+.rs div.vide{border:3px dashed var(--tomato);background:var(--bg)}
+.b20{background:#9EC9E8}
+.poster{width:260px;aspect-ratio:3/4;border-radius:16px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;font-family:var(--title);font-size:20px;box-shadow:0 6px 0 rgba(0,0,0,.15)}
+.poster.sm{width:130px;font-size:10px;padding:9px 6px}
+.poster .pt{font-size:1.9em;font-weight:700;line-height:1.1} .poster .pe{font-size:4.5em;line-height:1} .poster .pn{font-size:1.3em}
+.poster .pp{font-size:2.3em;font-weight:700;background:#fff;color:var(--tomato);border-radius:12px;padding:0 .4em}
+.chat{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:85%;padding:12px 14px;border-radius:18px;font-size:1.05rem}
+.bub .speak{width:38px;height:38px;font-size:1rem;vertical-align:middle;margin-left:6px}
+.bub.c{background:var(--bg);align-self:flex-start;border-bottom-left-radius:4px}
+.bub.m{background:#D7F5E2;align-self:flex-end;border-bottom-right-radius:4px}
+.bub.n{align-self:center;background:#FFF4C4;font-style:italic;max-width:100%}
+.bub .who{display:block;font-size:.85rem;font-weight:700;color:#3E5559}
+.plan{border-collapse:collapse;margin-bottom:14px;font-size:1.05rem}
+.plan th{background:var(--teal);color:#fff;padding:6px 12px}.plan td{border:2px solid #D5E3E5;padding:6px 12px}
+.plan tr.off td,.plan td.r{background:#FFF4C4}
+.bki{display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:4px 8px;margin:4px}
+.okl{color:var(--green);font-weight:700}
+.flat{display:flex;flex-wrap:wrap;gap:6px;font-size:2rem;max-width:560px}
+.ctn{border:3px dashed #8A6A4B;border-radius:10px;padding:4px 8px;font-size:1.5rem;background:#F3EDE4}
+.fiche{display:flex;gap:16px;align-items:flex-start;background:#fff;border:4px solid var(--fc,var(--teal));border-radius:16px;padding:16px;max-width:540px}
+.fiche .fa{font-size:4rem;line-height:1}.fiche .fn{font-family:var(--title);font-size:1.6rem}
+.fiche.sm{font-size:.8rem;padding:8px;gap:8px}.fiche.sm .fa{font-size:2rem}.fiche.sm .fn{font-size:1rem}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#C9D7D9;padding:10px;border-radius:16px;max-width:720px}
+.zbtn{background:#fff;border:3px solid var(--line);border-radius:12px;min-height:86px;font-size:.9rem;font-weight:700;padding:6px;line-height:1.2}
+.zbtn .e{display:block;font-size:2rem}
+.zbtn.good{background:#D7F5E2;border-color:var(--green)}.zbtn.bad{background:#FBDAD6;border-color:var(--tomato)}
+.tline{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;max-width:680px}
+.tline div{height:56px;border-radius:6px;background:#E8F0F1;display:flex;align-items:flex-end;justify-content:center;font-size:.72rem;padding-bottom:3px}
+.tline div.w{background:var(--yellow);border:2px solid var(--yellow-d)}
+.ticket{max-width:470px}
+.msgcard{background:#fff;border:3px dashed var(--line);border-radius:12px;padding:16px;margin-top:16px}
+.mag{max-width:460px;background:#fff;border:4px solid var(--mc);border-radius:16px;overflow:hidden;text-align:center;padding-bottom:14px}
+.mag .aw{height:34px;background:repeating-linear-gradient(90deg,var(--mc) 0 34px,#fff 34px 68px)}
+.mag .mn{font-family:var(--title);font-size:1.9rem;background:var(--mc);color:#fff;margin:12px 16px 6px;border-radius:10px;padding:6px}
+.mag .mt{font-weight:700}.mag .ms{font-style:italic;margin:6px}
+.mag .mr span{display:inline-block;background:var(--bg);border-radius:20px;padding:4px 10px;margin:3px;font-size:.9rem}
+.mag.sm{max-width:220px;font-size:.75rem;padding-bottom:6px}.mag.sm .mn{font-size:1rem;margin:6px}.mag.sm .aw{height:14px}.mag.sm .mr span{font-size:.7rem}
+.cv{max-width:520px;background:#fff;border:2px solid #C9D7D9;border-radius:12px;overflow:hidden;box-shadow:0 4px 0 rgba(0,0,0,.08);text-align:left}
+.cv .ch{background:var(--cc);color:#fff;padding:14px;display:flex;gap:12px;align-items:center}
+.cv .ce{font-size:3rem;line-height:1}.cv .cn{font-family:var(--title);font-size:1.6rem}
+.cv .cb{padding:10px 16px 14px}.cv h4{margin:10px 0 4px;color:var(--cc);font-family:var(--title);font-size:1.05rem}
+.cv ul{margin:0;padding-left:20px}
+.cv.sm{max-width:240px;font-size:.7rem}.cv.sm .ce{font-size:1.6rem}.cv.sm .cn{font-size:1rem}.cv.sm .ch{padding:6px}.cv.sm .cb{padding:4px 8px}.cv.sm h4{font-size:.8rem;margin:4px 0 2px}
+.poste{background:var(--mint);border-radius:16px;padding:18px;text-align:center;margin-top:16px}
+.poste .pe{font-size:3.5rem}.poste .pn{font-family:var(--title);font-size:1.6rem}
+footer{text-align:center;font-size:.9rem;color:#3E5559;padding:20px}
+@media print{.store-sign,.awning,footer,.noprint{display:none}.panel{padding:0}body.tl main{display:none}body.tl #tlayer{position:static;background:none;padding:0}}
+</style>
+</head>
+<body>
+<header class="store-sign">
+  <div class="wrap">
+    <h1>🛒 Mon magasin EPC <span style="background:var(--yellow);color:var(--ink);border-radius:10px;padding:2px 10px;font-size:1.1rem;vertical-align:middle">Niveau 5</span></h1>
+    <div class="row"><div class="who" id="who"></div><button class="btn yellow small" id="mute" onclick="toggleMute()" aria-pressed="false">🔊 Son activé</button><button class="btn ghost small" onclick="openTeacher()">🔒 Espace enseignante</button></div>
+  </div>
+</header>
+<div class="wrap"><div class="awning" aria-hidden="true"></div></div>
+<main class="wrap" id="app"></main>
+<footer id="foot"></footer>
+<div class="saved" id="saved" role="status">Enregistré ✔</div>
+<div id="tlayer" hidden></div>
+
+<script>
+const KEY = "epc_immersion_niveau5";
+let state = load();
+let cur = null;
+const app = document.getElementById("app");
+
+/* ================= Sauvegarde ================= */
+function newStudent(name){ return {name:name||"",results:{},avis:null,badge:null,colors:{},progress:{}}; }
+function blank(){ return {teacher:NOM_ENSEIGNANTE, code:CODE_PAR_DEFAUT, students:{}}; }
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(KEY));
+    if(s && s.students){ const out={}; for(const [k,v] of Object.entries(s.students)) if(v && v.name) out[k]=Object.assign(newStudent(), v); s.students=out;
+      if(!s.teacher) s.teacher = NOM_ENSEIGNANTE; return s; } }catch(e){}
+  return blank();
+}
+function save(show=true){
+  try{ localStorage.setItem(KEY, JSON.stringify(state));
+    if(show){ const el=document.getElementById("saved"); el.classList.add("on"); setTimeout(()=>el.classList.remove("on"),1500); }
+  }catch(e){ alert("Attention : l'enregistrement n'a pas fonctionné sur cet ordinateur."); }
+}
+const esc = t => String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const pickN = (a,n) => shuffle(a).slice(0,n);
+function teacherLabel(){ return "Proposé par " + esc(NOM_ENSEIGNANTE); }
+function refreshHeader(){
+  document.getElementById("who").innerHTML = teacherLabel() + (cur ? " &nbsp;|&nbsp; Élève : <b>" + esc(state.students[cur].name) + "</b>" : "");
+  document.getElementById("foot").innerHTML = "Niveau 5 – Découverte du CAP Équipier polyvalent du commerce – " + teacherLabel();
+}
+let curAct=null;
+function live(details){ if(!cur||!curAct||!state.students[cur]) return;
+  state.students[cur].progress[curAct]={details:[...details], date:new Date().toLocaleString("fr-FR")}; save(false); }
+function track(arr){ arr.push=function(...a){ const r=Array.prototype.push.apply(this,a); live(this); return r; }; return arr; }
+const norm = t => String(t).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),5000); }
+
+/* ================= Lecture à voix haute =================
+   Correction : le texte est rangé dans data-say (plus de bug avec les apostrophes). */
+let voiceWarned=false;
+function speak(t){
+  if(state.mute) return;
+  if(!("speechSynthesis" in window)){ if(!voiceWarned){ toast("La lecture à voix haute n'est pas disponible dans ce navigateur."); voiceWarned=true; } return; }
+  const clean = String(t).replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu,"").replace(/_+/g," ");
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(clean); u.lang="fr-FR"; u.rate=.9;
+  const v = speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().startsWith("fr"));
+  if(v) u.voice=v;
+  else if(!voiceWarned && speechSynthesis.getVoices().length){ toast("Aucune voix française n'est installée sur cet ordinateur."); voiceWarned=true; }
+  speechSynthesis.speak(u);
+}
+if("speechSynthesis" in window) speechSynthesis.getVoices();
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-say]"); if(!b) return;
+  if(state.mute && b.classList.contains("speak")) toast("Le son est coupé. Clique sur « 🔇 Son coupé » en haut pour le remettre.");
+  speak(b.dataset.say); });
+function drawMute(){ const b=document.getElementById("mute"); if(!b) return;
+  b.textContent = state.mute ? "🔇 Son coupé" : "🔊 Son activé";
+  b.className = "btn small " + (state.mute ? "ghost" : "yellow");
+  b.setAttribute("aria-pressed", state.mute ? "true" : "false"); }
+function toggleMute(){
+  state.mute = !state.mute;
+  if(state.mute && "speechSynthesis" in window) speechSynthesis.cancel();
+  save(false); drawMute();
+  if(!state.mute) speak("Le son est activé.");
+}
+const sayBtn = t => `<button class="speak" data-say="${esc(t)}" aria-label="Écouter">🔊</button>`;
+const consigne = t => `<div class="consigne">${sayBtn(t)}<p>${t}</p></div>`;
+
+/* ================= Vocabulaire niveau 5 ================= */
+const VOCAB = [
+  {w:"DIPLOME",d:"Diplôme",e:"🎓",def:"Le papier officiel qui montre que j'ai réussi ma formation."},
+  {w:"ENTRETIEN",d:"Entretien",e:"🤝",def:"Le rendez-vous où je parle avec un responsable pour obtenir un stage ou un travail."},
+  {w:"CANDIDATURE",d:"Candidature",e:"📨",def:"Quand je demande un stage ou un travail, avec mon CV."},
+  {w:"CONTRAT",d:"Contrat",e:"✍️",def:"Le document signé entre l'employeur et la personne qui travaille."},
+  {w:"SALAIRE",d:"Salaire",e:"💶",def:"L'argent que l'employeur donne à la personne pour son travail."},
+  {w:"PROJET",d:"Projet",e:"🎯",def:"Ce que j'ai envie de faire plus tard."},
+  {w:"METIER",d:"Métier",e:"🧑‍🔧",def:"Le travail que l'on a appris et que l'on fait."},
+  {w:"APPRENTI",d:"Apprenti",e:"🧑‍🎓",def:"Un jeune qui apprend un métier à la fois en entreprise et au centre de formation."},
+  {w:"EMPLOYEUR",d:"Employeur",e:"🏢",def:"L'entreprise ou la personne qui donne le travail et paie le salaire."},
+  {w:"GASPILLAGE",d:"Gaspillage",e:"🗑️",def:"Jeter quelque chose qui aurait pu servir, par exemple de la nourriture encore bonne."},
+  {w:"RECYCLAGE",d:"Recyclage",e:"♻️",def:"Transformer un déchet pour fabriquer quelque chose de nouveau."},
+  {w:"INTERNET",d:"Internet",e:"🌐",def:"Le réseau qui permet aux clients de commander depuis leur téléphone ou leur ordinateur."},
+  {w:"LIVREUR",d:"Livreur",e:"🚚",def:"La personne qui apporte les colis ou la marchandise."},
+  {w:"PONCTUEL",d:"Ponctuel",e:"⏰",def:"Une personne qui arrive toujours à l'heure."},
+  {w:"AUTONOME",d:"Autonome",e:"🧭",def:"Une personne qui sait faire son travail seule, sans qu'on lui dise tout."},
+  {w:"MOTIVATION",d:"Motivation",e:"🔥",def:"L'envie de bien faire et d'apprendre."},
+];
+
+/* ================= Activités ================= */
+const ZONES = [
+  {id:"z1", t:"Zone 1 – Mon avenir", d:"Après le CAP, le poste qui me ressemble, chercher un stage, le planning de l'équipe.", c:"#E5483B"},
+  {id:"z2", t:"Zone 2 – Les mots du pro (niveau 5)", d:"Les mots du travail et de l'avenir.", c:"#E8B800"},
+  {id:"z3", t:"Zone 3 – Les missions niveau 5", d:"Ticket de caisse, commande, anti-gaspi, retrait en magasin…", c:"#0E5C63"},
+  {id:"z4", t:"Zone 4 – La pause créative", d:"Coloriages et mon mini-CV.", c:"#7A4FB5"},
+  {id:"z5", t:"Zone 5 – Le grand défi final", d:"Le quiz final, puis mon avis.", c:"#1F8A4C"},
+];
+const ACTS = [
+  {id:"avenir",    z:"z1", ico:"🎓", lbl:"Après le CAP",         run:actAvenir},
+  {id:"poste",     z:"z1", ico:"🧭", lbl:"Le poste qui me ressemble", run:actPoste},
+  {id:"entretien", z:"z1", ico:"🤝", lbl:"Je demande un stage",  run:actEntretien},
+  {id:"equipe",    z:"z1", ico:"👥", lbl:"Le planning de l'équipe", run:actEquipePlan},
+  {id:"devinette", z:"z2", ico:"❓", lbl:"Qui suis-je ?",        run:actDevinette},
+  {id:"mystere",   z:"z2", ico:"🧺", lbl:"Le mot mystère",       run:actMystere},
+  {id:"ecoute",    z:"z2", ico:"🎧", lbl:"Écoute et écris",      run:actEcoute},
+  {id:"trous",     z:"z2", ico:"✏️", lbl:"Les phrases à trous",  run:actTrous},
+  {id:"memory",    z:"z2", ico:"🃏", lbl:"Le jeu des paires",    run:actMemory},
+  {id:"motsmeles", z:"z2", ico:"🔍", lbl:"Mots mêlés géants",    run:actMotsMeles},
+  {id:"ordre",     z:"z3", ico:"🔢", lbl:"Remettre dans l'ordre", run:actOrdre5},
+  {id:"ticket",    z:"z3", ico:"🧾", lbl:"Lire un ticket de caisse", run:actTicket},
+  {id:"commande",  z:"z3", ico:"📋", lbl:"Je passe la commande", run:actCommande},
+  {id:"gaspi",     z:"z3", ico:"🥕", lbl:"Anti-gaspi",           run:actGaspi},
+  {id:"retrait",   z:"z3", ico:"🌐", lbl:"Commande internet",    run:actRetrait},
+  {id:"rupture",   z:"z3", ico:"🚫", lbl:"Le produit manque",    run:actRupture},
+  {id:"caisse",    z:"z3", ico:"💶", lbl:"La caisse niveau 5",   run:actCaisse},
+  {id:"vraifaux",  z:"z3", ico:"✅", lbl:"Vrai ou faux : révisions", run:actVraiFaux},
+  {id:"col_sport", z:"z4", ico:"⚽", lbl:"Colorie le magasin de sport", run:()=>actColor("col_sport")},
+  {id:"col_jouets",z:"z4", ico:"🧸", lbl:"Colorie le magasin de jouets", run:()=>actColor("col_jouets")},
+  {id:"cv",        z:"z4", ico:"📄", lbl:"Mon mini-CV",          run:actCV},
+  {id:"defi",      z:"z5", ico:"🏆", lbl:"Le grand défi final",  run:actDefi},
+  {id:"avis",      z:"z5", ico:"📝", lbl:"Mon avis",             run:actAvis},
+];
+const isDone = (st,a) => a.id==="avis" ? !!st.avis : !!st.results[a.id];
+
+/* ================= Écran : choix de l'élève ================= */
+function screenLogin(){
+  cur=null; curAct=null; refreshHeader(); if("speechSynthesis" in window) speechSynthesis.cancel();
+  app.innerHTML = `
+  <div class="panel" style="max-width:640px;margin:22px auto 0;text-align:center">
+    <div style="font-size:3.5rem">🧑‍💼</div>
+    <h2>Bienvenue dans le magasin ! 👋</h2>
+    ${consigne("Tu vas découvrir le métier d'équipier du commerce. Écris ton prénom, puis clique sur J'entre. Si tu as déjà commencé, écris le même prénom : tu retrouves ton travail.")}
+    <label for="pn"><b>Mon prénom</b></label>
+    <input id="pn" autocomplete="off" style="display:block;width:100%;font:inherit;font-size:1.4rem;padding:14px;border-radius:14px;border:3px solid var(--line);margin:10px 0 16px;text-align:center">
+    <button class="btn yellow" id="go" style="font-size:1.2rem">J'entre dans le magasin 🛒</button>
+  </div>`;
+  const inp=document.getElementById("pn"); inp.focus();
+  inp.onkeydown=e=>{ if(e.key==="Enter") enter(); };
+  document.getElementById("go").onclick=enter;
+}
+function enter(){
+  const v=(document.getElementById("pn").value||"").trim();
+  if(!v){ alert("Écris ton prénom d'abord 🙂"); return; }
+  let k=Object.keys(state.students).find(k=>norm(state.students[k].name)===norm(v));
+  if(!k){ k="s"+Date.now(); state.students[k]=newStudent(v); save(); }
+  cur=k; screenHome();
+}
+
+/* ================= Écran : plan du magasin ================= */
+function badgeHTML(st){ const b=st.badge; if(!b) return "";
+  return `<div class="mybadge" style="--bc:${b.color}"><div style="font-size:2rem">${b.emoji}</div><b>${esc(st.name)}</b><br><small>Équipier stagiaire</small></div>`; }
+function screenHome(){
+  curAct=null; refreshHeader(); window.scrollTo(0,0);
+  const st = state.students[cur]; const done = ACTS.filter(a=>isDone(st,a)).length;
+  app.innerHTML = `
+  <div class="home-grid">
+    <div>
+      <div class="panel" style="margin-top:0;margin-bottom:20px">
+        <h2>Bonjour ${esc(st.name)} !</h2>
+        ${consigne("Voici le plan du magasin. Commence par la zone 1. Clique sur une case pour jouer. À chaque jeu terminé, tu gagnes un tampon sur ta carte de fidélité. Tu peux rejouer autant de fois que tu veux.")}
+      </div>
+      ${ZONES.map(z=>`<section class="zone" style="--zc:${z.c}">
+        <h3>${z.t}</h3><p class="zd">${z.d}</p>
+        <div class="aisles">
+          ${ACTS.filter(a=>a.z===z.id).map(a=>{ const r=st.results[a.id]; const ok=isDone(st,a);
+            const sub = !ok ? "À faire" : (a.id==="avis"||a.z==="z4"||a.id==="badge") ? "Terminé" : `Terminé – ${r.best} / ${r.max}`;
+            return `<button class="aisle ${ok?"done":""}" onclick="openAct('${a.id}')"><div class="ico">${a.ico}</div><div class="lbl">${a.lbl}</div><div class="st">${sub}</div></button>`;}).join("")}
+        </div></section>`).join("")}
+    </div>
+    <aside class="card" aria-label="Ma carte de fidélité">
+      <h3>💳 Ma carte de fidélité</h3>
+      <div>${esc(st.name)}</div>
+      <div class="stamps">${ACTS.map(a=>`<div class="stamp ${isDone(st,a)?"on":""}" title="${esc(a.lbl)}">${isDone(st,a)?"⭐":a.ico}</div>`).join("")}</div>
+      <div class="count">${done} / ${ACTS.length} tampons</div>
+      ${done===ACTS.length?`<p>🏆 Bravo ! Tu as tout terminé !</p><button class="btn yellow small" onclick="screenDiplome()">🎓 Mon diplôme</button>`:`<p>Encore ${ACTS.length-done} jeu${ACTS.length-done>1?"x":""} à découvrir.</p>`}
+      ${badgeHTML(st)}
+      <button class="btn ghost small" style="margin-top:12px" onclick="screenLogin()">Ce n'est pas moi</button>
+    </aside>
+  </div>`;
+}
+function openAct(id){ curAct=id; if("speechSynthesis" in window) speechSynthesis.cancel(); const a = ACTS.find(x=>x.id===id); app.innerHTML=""; a.run(); window.scrollTo(0,0); }
+const actHeader = (title, ico) => `<div class="row" style="justify-content:space-between"><h2>${ico} ${title}</h2><button class="btn ghost small" onclick="screenHome()">⬅ Retour au magasin</button></div>`;
+
+function finish(id, score, max, details, msgOverride, extra){
+  const st = state.students[cur]; const prev = st.results[id]; delete st.progress[id]; curAct=null;
+  st.results[id] = { score, max, best: Math.max(score, prev?prev.best:0), attempts:(prev?prev.attempts:0)+1,
+                     date:new Date().toLocaleString("fr-FR"), details };
+  save();
+  const ratio = score/max; const stars = ratio>=.99?3: ratio>=.6?2: 1;
+  const msg = msgOverride || (stars===3?"Parfait ! Tu es un vrai équipier !": stars===2?"Très bien ! Tu as presque tout trouvé.":"Bien essayé ! Tu peux recommencer pour gagner plus d'étoiles.");
+  app.innerHTML = `<div class="panel result">
+    <h2>Jeu terminé ! Tampon gagné ⭐</h2>
+    <div class="stars" aria-label="${stars} étoiles sur 3">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
+    ${msgOverride?"":`<p style="font-size:1.4rem"><b>${score} / ${max}</b></p>`}
+    <p>${msg} ${sayBtn(msg)}</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn yellow" onclick="screenHome()">🛒 Retour au magasin</button>
+      <button class="btn ghost" onclick="openAct('${id}')">🔁 Rejouer</button>
+    </div>${extra||""}</div>`;
+  window.scrollTo(0,0); speak(msg); if(stars>=2) burst();
+}
+function burst(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const em=["⭐","🛒","🎉","💶","🥳"];
+  for(let i=0;i<22;i++){ const s=document.createElement("span"); s.className="burst"; s.textContent=em[i%em.length];
+    s.style.left="50%"; s.style.top="40%"; s.style.setProperty("--dx",(Math.random()*700-350)+"px"); s.style.setProperty("--dy",(Math.random()*500-300)+"px");
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1500); }
+}
+
+/* ================= Moteur de quiz ================= */
+function runQuiz(box, questions, onEnd, keepOrder){
+  let i=0, score=0; const details=track([]);
+  function show(){
+    const q = questions[i]; let opts = q.opts.map((t,k)=>({t,ok:k===q.good})); if(!keepOrder) opts=shuffle(opts);
+    box.innerHTML = `<div class="progress"><div style="width:${i/questions.length*100}%"></div></div>
+      <p style="margin:0 0 6px;color:#3E5559">Question ${i+1} sur ${questions.length}</p>${q.pre||""}
+      <div class="row" style="align-items:flex-start;flex-wrap:nowrap">${sayBtn(q.q+" "+opts.map(o=>o.t).join(". "))}
+      <div class="question">${q.q}</div></div>
+      <div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div><div id="fb"></div>`;
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const o = opts[+b.dataset.k];
+      box.querySelectorAll(".opt").forEach((x,k)=>{ x.disabled=true; if(opts[k].ok) x.classList.add("good"); });
+      if(!o.ok) b.classList.add("bad"); else score++;
+      details.push(`${q.q.replace(/<[^>]+>/g,"")} → « ${o.t} » ${o.ok?"✔":"✘"}`);
+      const fbText = (o.ok?"Bravo ! ":"Ce n'est pas ça. ") + (q.explain||"");
+      box.querySelector("#fb").innerHTML = `<div class="feedback ${o.ok?"good":"bad"}">${o.ok?"✅":"❌"} ${fbText}</div>`;
+      speak(fbText);
+      setTimeout(()=>{ if(!box.isConnected) return; i++; i<questions.length? show() : onEnd(score, details); }, o.ok?1800:3500);
+    });
+  }
+  show();
+}
+
+/* ================= Moteur de dialogue ================= */
+function dialogue(o){
+  let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}<div class="chat" id="chat"></div><div id="ch"></div></div>`;
+  const chat=document.getElementById("chat"), ch=document.getElementById("ch");
+  const bub=(cls,who,t)=>chat.insertAdjacentHTML("beforeend",`<div class="bub ${cls}">${who?`<span class="who">${who}</span>`:""}${t}${cls!=="n"?sayBtn(t):""}</div>`);
+  function step(){
+    if(!chat.isConnected) return;
+    const S=o.steps[i]; if(S.n) bub("n","",S.n); if(S.c) bub("c",S.who||o.who,S.c);
+    speak([S.n,S.c].filter(Boolean).join(" "));
+    const opts=shuffle(S.opts.map((t,k)=>({t,ok:k===0})));
+    ch.innerHTML=`<p style="margin:14px 0 8px"><b>💬 Que dis-tu ?</b></p><div class="opts">${opts.map((x,k)=>`<button class="opt" data-k="${k}">${x.t}</button>`).join("")}</div><div id="fb"></div>`;
+    ch.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const x=opts[+b.dataset.k];
+      ch.querySelectorAll(".opt").forEach((y,k)=>{ y.disabled=true; if(opts[k].ok) y.classList.add("good"); });
+      if(x.ok) score++; else b.classList.add("bad");
+      det.push(`${S.c||S.n} → « ${x.t} » ${x.ok?"✔":"✘"}`);
+      const t=(x.ok?"Bravo ! ":"Ce n'est pas la meilleure réponse. ")+(S.ex||"");
+      ch.querySelector("#fb").innerHTML=`<div class="feedback ${x.ok?"good":"bad"}">${x.ok?"✅":"❌"} ${t}</div>`; speak(t);
+      setTimeout(()=>{ if(!chat.isConnected) return; bub("m","🧑‍💼 Moi",S.opts[0]); ch.innerHTML=""; i++;
+        if(i<o.steps.length) setTimeout(step,600); else setTimeout(()=>{ if(chat.isConnected) finish(o.id,score,o.steps.length,det); },1400); }, x.ok?2000:3800);
+    });
+  }
+  step();
+}
+
+/* ================= Moteur « bien / pas bien » ================= */
+function yesNo(o){
+  const items=shuffle(o.items); let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function show(){
+    const it=items[i];
+    g.innerHTML=`<div class="progress"><div style="width:${i/items.length*100}%"></div></div>
+      <div class="bigcard"><span class="e">${it[0]}</span>${it[1]} ${sayBtn(it[1])}</div>
+      <div class="two"><button class="btn" style="background:var(--green)" data-v="1">${o.yes}</button><button class="btn" style="background:var(--tomato)" data-v="0">${o.no}</button></div><div id="fb"></div>`;
+    g.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.v===it[2]; if(ok) score++;
+      det.push(`${it[1]} → ${b.dataset.v==="1"?"oui":"non"} ${ok?"✔":"✘"}`);
+      g.querySelectorAll("[data-v]").forEach(x=>x.disabled=true);
+      const t=(ok?"Bravo ! ":"Non. ")+(it[3]||"");
+      g.querySelector("#fb").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+      setTimeout(()=>{ if(!g.isConnected) return; i++; i<items.length?show():finish(o.id,score,items.length,det); }, ok?1800:3500);
+    });
+  }
+  show();
+}
+
+/* ================= Moteur « bien / pas bien » ================= */
+function yesNo(o){
+  const items=shuffle(o.items); let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function show(){
+    const it=items[i];
+    g.innerHTML=`<div class="progress"><div style="width:${i/items.length*100}%"></div></div>
+      <div class="bigcard"><span class="e">${it[0]}</span>${it[1]} ${sayBtn(it[1])}</div>
+      <div class="two"><button class="btn" style="background:var(--green)" data-v="1">${o.yes}</button><button class="btn" style="background:var(--tomato)" data-v="0">${o.no}</button></div><div id="fb"></div>`;
+    g.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.v===it[2]; if(ok) score++;
+      det.push(`${it[1]} → ${b.dataset.v==="1"?"oui":"non"} ${ok?"✔":"✘"}`);
+      g.querySelectorAll("[data-v]").forEach(x=>x.disabled=true);
+      const t=(ok?"Bravo ! ":"Non. ")+(it[3]||"");
+      g.querySelector("#fb").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+      setTimeout(()=>{ if(!g.isConnected) return; i++; i<items.length?show():finish(o.id,score,items.length,det); }, ok?1800:3500);
+    });
+  }
+  show();
+}
+
+/* ================= ZONE 1 ================= */
+function actAvenir(){
+  const Q=[
+    {q:"⏳ Le CAP Équipier polyvalent du commerce dure :", opts:["2 ans","6 mois","5 ans"], good:0},
+    {q:"🏬 Pendant les 2 ans du CAP, il y a combien de semaines de stage ?", opts:["14 semaines","2 semaines","50 semaines"], good:0},
+    {q:"🧑‍💼 Avec le CAP, on peut travailler comme :", opts:["Employé de libre-service, hôte de caisse, employé de drive…","Médecin","Pilote d'avion"], good:0},
+    {q:"🏪 L'équipier du commerce peut travailler :", opts:["Dans un supermarché, un magasin spécialisé, un drive…","Seulement dans une boulangerie","Seulement la nuit"], good:0},
+    {q:"🎓 Après le CAP, on peut continuer ses études avec :", opts:["Un bac pro Métiers du commerce et de la vente","Rien du tout, c'est interdit","Seulement l'université"], good:0, explain:"C'est une poursuite d'études possible après le CAP."},
+    {q:"🧑‍🎓 On peut aussi préparer le CAP en apprentissage. Ça veut dire :", opts:["J'apprends au centre de formation ET en entreprise, avec un contrat et un salaire","Je reste toujours à la maison","Je ne vais jamais en entreprise"], good:0},
+    {q:"📄 Un CV, c'est :", opts:["Une feuille qui me présente : mon nom, mes qualités, ce que je sais faire","Un ticket de caisse","Un bon de livraison"], good:0},
+    {q:"🔎 Pour trouver un stage, je peux :", opts:["Aller voir les magasins près de chez moi avec mon CV","Attendre qu'un magasin m'appelle tout seul","Ne rien faire"], good:0},
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Après le CAP","🎓")}${consigne("Que peut-on faire avec le CAP Équipier polyvalent du commerce ? Choisis la bonne réponse.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("avenir",s,Q.length,d));
+}
+
+function actPoste(){
+  const P={C:["🧾","Hôte ou hôtesse de caisse","Tu aimes le contact rapide avec beaucoup de clients et tu es à l'aise avec l'argent."],
+           R:["🛒","Employé de libre-service (rayon)","Tu aimes que tout soit bien rangé, propre et organisé."],
+           D:["🚗","Employé de drive / préparateur de commandes","Tu es rapide, attentif, et tu aimes quand une commande est parfaite."],
+           V:["💬","Équipier de vente / vendeur conseil","Tu aimes parler avec les gens et les aider à choisir."]};
+  const Q=[["J'aime surtout…",[["Parler avec les gens","V"],["Compter et manipuler l'argent","C"],["Ranger et organiser","R"],["Chercher et préparer des choses vite","D"]]],
+           ["Au magasin, je préfère être…",[["À la caisse","C"],["Dans les rayons","R"],["Au rayon vêtements, pour conseiller","V"],["À la préparation des commandes","D"]]],
+           ["Je suis plutôt…",[["Patient et souriant","C"],["Organisé et soigneux","R"],["Rapide et attentif","D"],["Curieux et bavard","V"]]],
+           ["Ce qui me plaît le plus…",[["Que tout soit bien rangé","R"],["Aider quelqu'un à choisir","V"],["Qu'une commande soit parfaite","D"],["Dire bonjour à beaucoup de clients","C"]]],
+           ["Mon jeu préféré dans le magasin EPC…",[["La caisse","C"],["Ranger les rayons","R"],["Le drive","D"],["Les dialogues avec les clients","V"]]]];
+  const pts={C:0,R:0,D:0,V:0}; let i=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader("Le poste qui me ressemble","🧭")}
+    ${consigne("Ce n'est pas un contrôle : il n'y a pas de mauvaise réponse ! Choisis ce qui te ressemble le plus. À la fin, tu découvres un poste qui pourrait te plaire.")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function show(){
+    const q=Q[i], o=shuffle(q[1]);
+    g.innerHTML=`<div class="progress"><div style="width:${i/Q.length*100}%"></div></div><p style="margin:0 0 6px;color:#3E5559">Question ${i+1} sur ${Q.length}</p>
+      <div class="row" style="flex-wrap:nowrap">${sayBtn(q[0]+" "+o.map(x=>x[0]).join(". "))}<div class="question">${q[0]}</div></div>
+      <div class="opts">${o.map((x,k)=>`<button class="opt" data-k="${k}">${x[0]}</button>`).join("")}</div>`;
+    g.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ const x=o[+b.dataset.k]; pts[x[1]]++; det.push(`${q[0]} → ${x[0]}`); b.classList.add("good"); g.querySelectorAll(".opt").forEach(y=>y.disabled=true);
+      setTimeout(()=>{ if(!g.isConnected) return; i++; i<Q.length?show():end(); },700); });
+  }
+  function end(){
+    const k=Object.keys(pts).sort((a,b)=>pts[b]-pts[a])[0], p=P[k];
+    state.students[cur].poste=p[1];
+    finish("poste",1,1,det,`Le poste qui te ressemble : ${p[1]}. ${p[2]} Bien sûr, tu peux aimer plusieurs postes !`,
+      `<div class="poste"><div class="pe">${p[0]}</div><div class="pn">${p[1]}</div><p>${p[2]}</p></div>`);
+  }
+  show();
+}
+
+function actEntretien(){
+  const nm=esc(state.students[cur].name);
+  dialogue({id:"entretien", title:"Je demande un stage", ico:"🤝", who:"👩‍💼 La responsable du magasin",
+    cons:"Tu cherches un stage. Tu vas dans un magasin pour te présenter. Choisis à chaque fois la meilleure réponse.",
+    steps:[
+      {n:"Tu entres dans le magasin, bien habillé, avec ton CV. Tu vas à l'accueil.", c:"Bonjour, je peux vous aider ?", who:"💁 L'hôtesse d'accueil", opts:["Bonjour madame. Je cherche un stage. Je voudrais parler au responsable du magasin, s'il vous plaît.","Je veux un stage.","Il est où, le chef ?"], ex:"Je dis bonjour et j'explique poliment pourquoi je viens."},
+      {n:"La responsable du magasin arrive.", c:"Bonjour ! Alors, tu cherches un stage ?", opts:[`Bonjour madame. Oui, je m'appelle ${nm}. Je suis élève au lycée professionnel et je cherche un stage dans le commerce.`,"Ouais.","C'est ma prof qui m'oblige."], ex:"Je me présente : mon prénom, mon école, ce que je cherche."},
+      {c:"Pourquoi notre magasin ?", opts:["J'aime le contact avec les clients, et votre magasin est près de chez moi.","Je sais pas.","Parce que c'est le premier que j'ai trouvé."], ex:"Je montre que j'ai envie de venir : c'est la motivation."},
+      {c:"Quelles sont tes qualités ?", opts:["Je suis ponctuel, poli, et j'aime travailler en équipe.","J'en ai pas.","Je suis le meilleur, je sais tout faire."], ex:"Je donne de vraies qualités, sans me vanter."},
+      {c:"Qu'est-ce que tu sais déjà faire ?", opts:["Je sais remplir un rayon, accueillir un client et rendre la monnaie.","Rien.","Tout."], ex:"Je parle de ce que j'ai appris."},
+      {c:"Très bien. Tu as un CV ?", opts:["Oui, le voilà. J'ai aussi les papiers du lycée pour le stage.","Non, c'est quoi ?","Je l'ai oublié, tant pis."], ex:"J'apporte toujours mon CV."},
+      {c:"Je vais le lire, et je te rappelle cette semaine.", opts:["Merci beaucoup, madame. Mon numéro est sur le CV. Bonne journée !","OK, salut.","(Je pars sans rien dire.)"], ex:"Je remercie et je dis au revoir poliment."},
+    ]});
+}
+
+const EQ=`<table class="plan"><thead><tr><th>Qui ?</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th></tr></thead><tbody>
+<tr><td>Léo (caisse)</td><td>Matin</td><td>Matin</td><td class="r">Repos</td><td>Après-midi</td><td>Après-midi</td><td>Journée</td></tr>
+<tr><td>Inès (rayon frais)</td><td>Après-midi</td><td class="r">Repos</td><td>Matin</td><td>Matin</td><td>Journée</td><td>Matin</td></tr>
+<tr><td>Karim (réserve)</td><td>Journée</td><td>Journée</td><td>Journée</td><td class="r">Repos</td><td>Matin</td><td class="r">Repos</td></tr>
+<tr><td><b>Moi (stagiaire)</b></td><td>Matin</td><td>Matin</td><td class="r">Repos</td><td>Matin</td><td>Matin</td><td>Journée</td></tr></tbody></table>
+<p style="font-size:.95rem;margin-top:0">Journée = le matin ET l'après-midi.</p>`;
+function actEquipePlan(){
+  const Q=[
+    ["Qui est en repos le mercredi ?",["Léo et moi","Inès","Karim"],""],
+    ["Lundi matin, qui travaille avec moi ?",["Léo et Karim","Inès","Personne"],"Karim travaille toute la journée : il est donc là le matin."],
+    ["Samedi, je travaille :",["Toute la journée","Seulement le matin","Je suis en repos"],""],
+    ["Karim travaille où ?",["À la réserve","À la caisse","Au rayon frais"],""],
+    ["Jeudi après-midi, qui travaille ?",["Léo","Inès","Karim"],""],
+    ["Combien de jours je travaille dans la semaine ?",["5 jours","6 jours","3 jours"],"Lundi, mardi, jeudi, vendredi, samedi : 5 jours."],
+    ["Mardi, Inès est :",["En repos","Au travail le matin","Au travail toute la journée"],""],
+    ["Jeudi matin, j'ai besoin d'aide. Qui est là ?",["Inès","Karim","Léo"],"Jeudi : Karim est en repos et Léo vient l'après-midi."],
+  ].map(x=>({pre:EQ, q:x[0], opts:x[1], good:0, explain:x[2]}));
+  app.innerHTML=`<div class="panel">${actHeader("Le planning de l'équipe","👥")}${consigne("Voici le planning de toute l'équipe. Lis bien les lignes et les colonnes pour répondre.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("equipe",s,Q.length,d));
+}
+
+/* ================= ZONE 2 ================= */
+function actDevinette(){
+  const qs = pickN(VOCAB,8).map(v=>{ const others=pickN(VOCAB.filter(x=>x!==v),2);
+    return {q:"Qui suis-je ? "+v.def, opts:[v.e+" "+v.d, ...others.map(o=>o.e+" "+o.d)], good:0, explain:"C'est : "+v.d+"."}; });
+  app.innerHTML = `<div class="panel">${actHeader("Qui suis-je ?","❓")}
+    ${consigne("Lis la devinette et trouve le bon mot du magasin.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), qs, (s,d)=>finish("devinette",s,qs.length,d));
+}
+
+function actMystere(){
+  const words = pickN(VOCAB,5); let n=0, score=0; const det=track([]);
+  const food=["🍎","🥖","🧀","🥛","🍌","🥕","🍪"];
+  app.innerHTML = `<div class="panel">${actHeader("Le mot mystère","🧺")}
+    ${consigne("Trouve le mot caché en cliquant sur les lettres. Attention : à chaque erreur, un produit tombe du panier !")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; const found=new Set(); let lives=food.length;
+    const draw=()=>{
+      g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+        <div class="feedback info row" style="flex-wrap:nowrap">${sayBtn("Indice. "+v.def)}<span>💡 Indice : ${v.def}</span></div>
+        <div class="word">${[...v.w].map(l=>`<span>${found.has(l)?l:""}</span>`).join("")}</div>
+        <div class="basket" aria-label="Panier">🧺 ${food.slice(0,lives).join(" ")}${"<span style='opacity:.2'>⬜</span>".repeat(food.length-lives)}</div>
+        <div class="keys" style="margin-top:14px">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button class="key" data-l="${l}">${l}</button>`).join("")}</div><div id="fb"></div>`;
+    };
+    draw();
+    const bind=()=>g.querySelectorAll(".key").forEach(k=>k.onclick=()=>{
+      const l=k.dataset.l; if(v.w.includes(l)) found.add(l); else lives--;
+      const win=[...v.w].every(c=>found.has(c));
+      const tried=[...g.querySelectorAll(".key:disabled")].map(x=>x.dataset.l).concat(l);
+      draw(); g.querySelectorAll(".key").forEach(x=>{ if(tried.includes(x.dataset.l)){ x.disabled=true; if(v.w.includes(x.dataset.l)) x.classList.add("g"); } });
+      if(win||lives===0){
+        g.querySelectorAll(".key").forEach(x=>x.disabled=true);
+        if(win) score++; det.push(`${v.d} : ${win?"trouvé ✔ ("+(food.length-lives)+" erreur(s))":"pas trouvé ✘"}`);
+        if(!win) g.querySelector(".word").innerHTML=[...v.w].map(c=>`<span>${c}</span>`).join("");
+        const t = win?`Bravo ! Le mot était ${v.d}.`:`Dommage ! Le mot était ${v.d}.`;
+        g.querySelector("#fb").innerHTML=`<div class="feedback ${win?"good":"bad"}">${win?"🎉":"😕"} ${t}</div>`;
+        speak(t); setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("mystere",score,words.length,det); }, 2600);
+      } else bind();
+    });
+    bind();
+  }
+  play();
+}
+
+function actLettres(){
+  const words = pickN(VOCAB.filter(v=>v.w.length<=8),6); let n=0, score=0; const det=track([]);
+  app.innerHTML = `<div class="panel">${actHeader("Lettres mélangées","🔤")}
+    ${consigne("Les lettres sont mélangées ! Clique sur les lettres dans le bon ordre pour écrire le mot.")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; let mix; do{ mix=shuffle([...v.w]); }while(mix.join("")===v.w);
+    let built=[], help=false, errors=0;
+    const draw=()=>{
+      g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+        <div class="bigcard"><span class="e">${v.e}</span></div>
+        <div class="word">${[...v.w].map((c,i)=>`<span>${built[i]!==undefined?mix[built[i]]:(help&&i===0?`<i style="opacity:.4">${c}</i>`:"")}</span>`).join("")}</div>
+        <div class="letters">${mix.map((c,i)=>`<button class="letter" data-i="${i}" ${built.includes(i)?"disabled":""}>${c}</button>`).join("")}</div>
+        <div class="row" style="justify-content:center;margin-top:14px"><button class="btn ghost small" id="bk">⌫ Effacer</button><button class="btn ghost small" id="hp">💡 Indice</button></div><div id="fb"></div>`;
+      g.querySelectorAll(".letter").forEach(b=>b.onclick=()=>{ built.push(+b.dataset.i); draw(); check(); });
+      g.querySelector("#bk").onclick=()=>{ built.pop(); draw(); };
+      g.querySelector("#hp").onclick=()=>{ help=true; draw(); g.querySelector("#fb").innerHTML=`<div class="feedback info row" style="flex-wrap:nowrap">${sayBtn(v.def)}<span>💡 ${v.def}</span></div>`; };
+    };
+    const check=()=>{
+      if(built.length<v.w.length) return;
+      const w=built.map(i=>mix[i]).join("");
+      if(w===v.w){ const ok=errors===0&&!help; if(ok) score++; det.push(`${v.d} ✔ ${errors?errors+" erreur(s)":""}${help?" (avec indice)":""}`);
+        g.querySelectorAll(".letter,#bk,#hp").forEach(x=>x.disabled=true);
+        g.querySelector("#fb").innerHTML=`<div class="feedback good">🎉 Bravo ! ${v.d}</div>`;
+        speak("Bravo ! "+v.d);
+        setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("lettres",score,words.length,det); }, 1800);
+      } else { errors++; g.querySelector(".word").classList.add("shake"); g.querySelector("#fb").innerHTML=`<div class="feedback bad">Ce n'est pas le bon ordre. Clique sur Effacer et essaie encore.</div>`; }
+    };
+    draw();
+  }
+  play();
+}
+
+function actMemory(){
+  const sel = pickN(VOCAB,8);
+  const cards = shuffle(sel.flatMap((v,i)=>[{p:i,html:`<span class="e">${v.e}</span>`,say:v.d},{p:i,html:v.d,say:v.d}]));
+  let open=[], found=0, moves=0, lock=false;
+  app.innerHTML = `<div class="panel">${actHeader("Le jeu des paires","🃏")}
+    ${consigne("Retourne 2 cartes. Trouve l'image et le mot qui vont ensemble.")}
+    <p>Coups : <b id="mv">0</b> – Paires : <b id="pf">0</b> / ${sel.length}</p>
+    <div class="mem">${cards.map((c,i)=>`<button class="mcard" data-i="${i}" aria-label="Carte">🛒</button>`).join("")}</div></div>`;
+  app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i; if(lock||open.includes(i)||b.classList.contains("done")) return;
+    b.classList.add("open"); b.innerHTML=cards[i].html; speak(cards[i].say); open.push(i);
+    if(open.length===2){ moves++; document.getElementById("mv").textContent=moves; const [a,c]=open; setTimeout(()=>live([`En cours : ${moves} coups, ${found} paire(s) trouvée(s)`]),0);
+      if(cards[a].p===cards[c].p){ [a,c].forEach(k=>app.querySelector(`.mcard[data-i="${k}"]`).classList.add("done")); open=[]; found++; document.getElementById("pf").textContent=found;
+        if(found===sel.length){ const s=moves<=13?3:moves<=19?2:1; setTimeout(()=>finish("memory",s,3,[`Terminé en ${moves} coups`]),700); }
+      } else { lock=true; setTimeout(()=>{ [a,c].forEach(k=>{const x=app.querySelector(`.mcard[data-i="${k}"]`); x.classList.remove("open"); x.innerHTML="🛒";}); open=[]; lock=false; },1100); }
+    }
+  });
+}
+
+function actMotsMeles(){
+  const N=12; const words = pickN(VOCAB.filter(v=>v.w.length<=12),9).map(v=>v.w);
+  let grid;
+  for(let t=0;t<200;t++){
+    grid=Array(N*N).fill(null); let ok=true;
+    for(const w of [...words].sort((a,b)=>b.length-a.length)){
+      let placed=false;
+      for(let k=0;k<300&&!placed;k++){
+        const h=Math.random()<.5, r=Math.floor(Math.random()*(h?N:N-w.length+1)), c=Math.floor(Math.random()*(h?N-w.length+1:N));
+        const cells=[...w].map((_,i)=>h?r*N+c+i:(r+i)*N+c);
+        if(cells.every((x,i)=>grid[x]===null||grid[x]===w[i])){ cells.forEach((x,i)=>grid[x]=w[i]); placed=true; }
+      }
+      if(!placed){ ok=false; break; }
+    }
+    if(ok) break;
+  }
+  const A="ABCDEFGHIJLMNOPRSTUV"; grid=grid.map(x=>x||A[Math.floor(Math.random()*A.length)]);
+  const foundW=new Set(); let start=null, wrong=0;
+  app.innerHTML = `<div class="panel">${actHeader("Mots mêlés","🔍")}
+    ${consigne("Trouve les mots du magasin dans la grille. Les mots sont écrits de gauche à droite, ou de haut en bas. Clique sur la première lettre du mot, puis sur la dernière lettre.")}
+    <div class="wl" id="wl"></div>
+    <div class="ws" style="grid-template-columns:repeat(${N},1fr)">${grid.map((l,i)=>`<button data-i="${i}">${l}</button>`).join("")}</div>
+    <div id="fb"></div><p style="text-align:center"><button class="btn ghost small" id="stop">J'arrête et je termine</button></p></div>`;
+  const wl=()=>document.getElementById("wl").innerHTML=words.map(w=>`<span class="${foundW.has(w)?"f":""}">${VOCAB.find(v=>v.w===w).d}</span>`).join("");
+  wl();
+  const end=()=>finish("motsmeles",foundW.size,words.length,[`Mots trouvés : ${[...foundW].join(", ")||"aucun"}`,`Mauvaises sélections : ${wrong}`]);
+  document.getElementById("stop").onclick=end;
+  app.querySelectorAll(".ws button").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i, fb=document.getElementById("fb");
+    if(start===null){ start=i; b.classList.add("start"); return; }
+    const s=start; start=null; app.querySelector(`.ws button[data-i="${s}"]`).classList.remove("start");
+    const r1=Math.floor(s/N),c1=s%N,r2=Math.floor(i/N),c2=i%N; let cells=null;
+    if(r1===r2){ const a=Math.min(c1,c2),z=Math.max(c1,c2); cells=[]; for(let c=a;c<=z;c++) cells.push(r1*N+c); }
+    else if(c1===c2){ const a=Math.min(r1,r2),z=Math.max(r1,r2); cells=[]; for(let r=a;r<=z;r++) cells.push(r*N+c1); }
+    const w = cells ? cells.map(x=>grid[x]).join("") : "";
+    const hit = words.find(x=>!foundW.has(x) && (x===w || x===[...w].reverse().join("")));
+    if(hit){ foundW.add(hit); live([`Mots trouvés : ${[...foundW].join(", ")}`]); cells.forEach(x=>app.querySelector(`.ws button[data-i="${x}"]`).classList.add("f")); wl();
+      const d=VOCAB.find(v=>v.w===hit).d; fb.innerHTML=`<div class="feedback good">✅ Tu as trouvé : ${d} !</div>`; speak(d);
+      if(foundW.size===words.length) setTimeout(end,900);
+    } else { wrong++; fb.innerHTML=`<div class="feedback bad">Ce n'est pas un mot de la liste. Clique sur la première lettre, puis sur la dernière lettre.</div>`; }
+  });
+}
+
+/* ================= ZONE 2 (suite) ================= */
+function actEcoute(){
+  const words=pickN(VOCAB.filter(v=>v.w.length<=10),6); let n=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader("Écoute et écris","🎧")}
+    ${consigne("Écoute le mot. Regarde l'image et l'indice. Écris le mot, puis clique sur Valider. Les accents ne comptent pas.")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; let tries=0, help=0;
+    g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+      <div class="bigcard"><span class="e">${v.e}</span><button class="btn yellow" data-say="${esc(v.d)}">🔊 Écouter le mot</button></div>
+      <div class="feedback info">💡 ${v.def}</div>
+      <p>Le mot a <b>${v.w.length}</b> lettres.</p>
+      <input id="ans" autocomplete="off" aria-label="Écris le mot" style="width:100%;font:inherit;font-size:1.5rem;padding:12px;border-radius:12px;border:3px solid var(--line);text-align:center;text-transform:uppercase">
+      <div class="row" style="margin-top:12px"><button class="btn yellow" id="ok">✅ Valider</button><button class="btn ghost small" id="hp">💡 Donne-moi une lettre</button></div><div id="fb"></div>`;
+    speak(v.d);
+    const inp=g.querySelector("#ans"); inp.focus();
+    inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+    g.querySelector("#ok").onclick=check;
+    g.querySelector("#hp").onclick=()=>{ help=Math.min(help+1,v.w.length-1); inp.value=v.d.slice(0,help).toUpperCase(); inp.focus(); };
+    function check(){
+      const a=norm(inp.value).replace(/[^a-z]/g,""), fb=g.querySelector("#fb");
+      if(!a){ fb.innerHTML=`<div class="feedback bad">Écris le mot 🙂</div>`; return; }
+      tries++;
+      const ok=a===v.w.toLowerCase();
+      if(ok||tries>=3){
+        if(ok&&tries===1&&help===0) score++;
+        det.push(`${v.d} : « ${inp.value} » ${ok?"✔":"✘"}${tries>1?" – "+tries+" essais":""}${help?" – "+help+" lettre(s) donnée(s)":""}`);
+        const t= ok?`Bravo ! ${v.d}.`:`Le mot était : ${v.d}.`;
+        fb.innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"🎉":"😕"} ${t}</div>`; speak(t);
+        g.querySelectorAll("#ok,#hp,#ans").forEach(x=>x.disabled=true);
+        setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("ecoute",score,words.length,det); }, ok?2000:3200);
+      } else { fb.innerHTML=`<div class="feedback bad">❌ Pas tout à fait. Écoute encore et vérifie les lettres.</div>`; speak(v.d); inp.select(); }
+    }
+  }
+  play();
+}
+
+function actTrous(){
+  const Q=[
+    ["Pour trouver un stage, je donne mon ______ au responsable.",["CV","ticket","carton"],"Mon CV."],
+    ["Le rendez-vous avec le responsable, c'est un ______ .",["entretien","inventaire","étal"],"Un entretien."],
+    ["L'argent que je reçois pour mon travail, c'est le ______ .",["salaire","rayon","stock"],"Le salaire."],
+    ["J'arrive toujours à l'heure : je suis ______ .",["ponctuel","autonome","fournisseur"],"Ponctuel."],
+    ["Je sais travailler seul : je suis ______ .",["autonome","ponctuel","surgelé"],"Autonome."],
+    ["Jeter de la nourriture encore bonne, c'est du ______ .",["gaspillage","recyclage","balisage"],"Du gaspillage."],
+    ["Le carton est transformé pour faire du nouveau papier : c'est le ______ .",["recyclage","gaspillage","facing"],"Le recyclage."],
+    ["Un jeune qui apprend en entreprise et au centre de formation, c'est un ______ .",["apprenti","client","livreur"],"Un apprenti."],
+    ["L'employeur et moi, nous signons un ______ .",["contrat","ticket","planning"],"Un contrat."],
+    ["Ce que j'ai envie de faire plus tard, c'est mon ______ .",["projet","rayon","badge"],"Mon projet."],
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Les phrases à trous","✏️")}${consigne("Il manque un mot dans la phrase. Choisis le bon mot.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), shuffle(Q).map(x=>({q:x[0], opts:x[1], good:0, explain:x[2]})), (s,d)=>finish("trous",s,Q.length,d));
+}
+
+/* ================= ZONE 3 ================= */
+function numRounds(o){
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const R=o.rounds[r]; let tries=0;
+    app.innerHTML=`<div class="panel">${actHeader(`${o.title} (${r+1}/${o.rounds.length})`,o.ico)}${consigne(R.cons)}
+      <div id="vis">${R.html}</div>
+      <div class="row" style="margin-top:16px"><label for="ans"><b>${R.q}</b></label>
+      <input id="ans" type="number" inputmode="numeric" min="0" style="width:120px;font:inherit;font-size:1.6rem;padding:8px;border-radius:12px;border:3px solid var(--line);text-align:center">
+      <button class="btn yellow" id="ok">✅ Valider</button><button class="btn ghost small" id="hp">💡 Aide</button></div><div id="fb"></div></div>`;
+    if(o.bind) o.bind(app.querySelector("#vis"));
+    const inp=app.querySelector("#ans"); inp.focus();
+    inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+    app.querySelector("#ok").onclick=check;
+    app.querySelector("#hp").onclick=()=>{ if(R.helpVis) app.querySelector("#vis").innerHTML=R.helpVis; document.getElementById("fb").innerHTML=`<div class="feedback info">💡 ${R.help}</div>`; speak(R.help); };
+    function check(){
+      const v=parseInt(inp.value,10), fb=document.getElementById("fb");
+      if(isNaN(v)){ fb.innerHTML=`<div class="feedback bad">Écris un nombre 🙂</div>`; return; }
+      tries++;
+      if(v===R.ans||tries>=3){ const ok=v===R.ans; if(ok&&tries===1) score++;
+        det.push(`${R.label} : ${v} ${ok?"✔":"✘ (bonne réponse : "+R.ans+")"}${tries>1?" – "+tries+" essais":""}`);
+        const t= ok?`Bravo ! La réponse est ${R.ans}.`:`La bonne réponse était ${R.ans}.`;
+        fb.innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+        app.querySelectorAll("#ok,#hp,#ans").forEach(x=>x.disabled=true);
+        setTimeout(()=>{ if(!fb.isConnected) return; r++; r<o.rounds.length?play():finish(o.id,score,o.rounds.length,det); }, ok?1800:3200);
+      } else { const t= v<R.ans?"C'est plus.":"C'est moins."; fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas ça. ${t} Essaie encore.</div>`; speak(t); inp.select(); }
+    }
+  }
+  play();
+}
+function ordreGame(id,T,ico,cons,rounds){
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const R=rounds[r]; const mix=shuffle(R.steps.map((s,i)=>({s,i}))); let step=0, err=0;
+    app.innerHTML=`<div class="panel">${actHeader(`${T} – ${R.t} (${r+1}/${rounds.length})`,ico)}
+      ${consigne(cons)}
+      <div class="opts" id="mx">${mix.map((m,k)=>`<button class="opt" data-k="${k}">${m.s}</button>`).join("")}</div>
+      <h3 style="margin-top:18px">Le bon ordre</h3><ol id="okl" style="font-size:1.05rem"></ol><div id="fb"></div></div>`;
+    app.querySelectorAll("#mx .opt").forEach(b=>b.onclick=()=>{
+      const m=mix[+b.dataset.k], fb=document.getElementById("fb");
+      if(m.i===step){ step++; b.remove(); document.getElementById("okl").insertAdjacentHTML("beforeend",`<li>${m.s}</li>`);
+        fb.innerHTML=`<div class="feedback good">✅ Oui !</div>`; speak(m.s);
+        if(step===R.steps.length){ if(err<=1) score++; det.push(`${R.t} : ${err} erreur(s)`);
+          fb.innerHTML=`<div class="feedback good">🎯 Bravo, tout est dans l'ordre !</div>`;
+          setTimeout(()=>{ if(!fb.isConnected) return; r++; r<rounds.length?play():finish(id,score,rounds.length,det); },2000); }
+      } else { err++; b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+        fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas encore cette étape. Cherche celui qui vient en numéro ${step+1}.</div>`; }
+    });
+  }
+  play();
+}
+
+function minCoins(v){ let n=0; for(const c of [2000,1000,500,200,100,50,20,10]){ n+=Math.floor(v/c); v%=c; } return n; }
+function actCaisse(){
+  const rounds=[{items:[["🍎 Pommes",240],["🥛 Lait",140],["🥖 Pain",110]],paid:1000},
+                {items:[["🧀 Fromage",385],["🍝 Pâtes",95],["🧃 Jus",170]],paid:1000},
+                {items:[["👟 Baskets",3990],["🧦 Chaussettes",480]],paid:5000},
+                {items:[["🧸 Peluche",1250],["🎁 Papier cadeau",320],["🏷️ Remise",-170]],paid:2000}];
+  const money=[[2000,"20 €","bill b20"],[1000,"10 €","bill b10"],[500,"5 €","bill b5"],[200,"2 €","coin c-bi"],[100,"1 €","coin c-bi"],[50,"50 c","coin c-gold"],[20,"20 c","coin c-gold"],[10,"10 c","coin c-gold"]];
+  const euro=c=>(c/100).toFixed(2).replace(".",",")+" €";
+  let r=0, score=0; const det=track([]);
+  function show(){
+    const R=rounds[r]; const total=R.items.reduce((s,i)=>s+i[1],0); const due=R.paid-total;
+    const choices=shuffle([total,total+100,total-50]); let t1=0;
+    const ticket=tot=>`<div class="ticket"><b>TICKET</b><br>${R.items.map(i=>`${i[0]} ...... ${euro(i[1])}`).join("<br>")}<div class="tot">TOTAL : ${tot}</div>${tot!=="?"?`<div>Le client donne : <b>${euro(R.paid)}</b></div>`:""}</div>`;
+    app.innerHTML=`<div class="panel">${actHeader(`La caisse – client ${r+1} sur ${rounds.length}`,"💶")}
+      ${consigne("Étape 1 : additionne les prix. Attention : une ligne avec un moins, c'est une remise. Elle fait baisser le total. Quel est le total à payer ?")}
+      <div class="row" style="align-items:flex-start;gap:24px">${ticket("?")}
+        <div style="flex:1;min-width:240px"><div class="opts">${choices.map(c=>`<button class="opt" data-v="${c}">${euro(c)}</button>`).join("")}</div>
+        <p><button class="btn ghost small" id="hlp">💡 Aide</button></p><div id="fb"></div></div></div></div>`;
+    document.getElementById("hlp").onclick=()=>{ document.getElementById("fb").innerHTML=`<div class="feedback info">💡 ${R.items.map(i=>euro(i[1])).join(" + ")} = ?</div>`; };
+    app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      t1++; const fb=document.getElementById("fb");
+      if(+b.dataset.v===total){ if(t1===1) score++; det.push(`Client ${r+1} – total ${euro(total)} ${t1===1?"du 1er coup ✔":"en "+t1+" essais"}`);
+        fb.innerHTML=`<div class="feedback good">✅ Oui, le total est ${euro(total)}.</div>`; speak("Oui !");
+        app.querySelectorAll(".opt").forEach(x=>x.disabled=true); setTimeout(()=>{ if(fb.isConnected) step2(); },1500);
+      } else { b.disabled=true; b.classList.add("bad"); fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas le bon total. Recompte : ${R.items.map(i=>euro(i[1])).join(" + ")}</div>`; }
+    });
+    function step2(){
+      let tray=[], tries=0, help=false;
+      app.innerHTML=`<div class="panel">${actHeader(`La caisse – client ${r+1} sur ${rounds.length}`,"💶")}
+        ${consigne(`Étape 2 : le client paie avec ${R.paid/100} euros. Rends-lui la monnaie. Défi bonus : utilise le moins de pièces et de billets possible !`)}
+        <div class="row" style="align-items:flex-start;gap:24px">${ticket(euro(total))}
+          <div style="flex:1;min-width:260px">
+            <div class="tray"><div>Je rends au client :</div><div class="sum" id="sum">0,00 €</div><div id="tr" style="font-size:.95rem"></div></div>
+            <div class="money">${money.map(m=>`<button class="${m[2]}" data-v="${m[0]}" aria-label="${m[1]}">${m[1]}</button>`).join("")}</div>
+            <div class="row"><button class="btn yellow" id="ok">✅ Je rends la monnaie</button><button class="btn ghost small" id="clr">↩ Tout reprendre</button><button class="btn ghost small" id="hlp">💡 Aide</button></div>
+            <div id="fb"></div></div></div></div>`;
+      const upd=()=>{ const s=tray.reduce((a,b)=>a+b,0); document.getElementById("sum").textContent=euro(s); document.getElementById("tr").textContent=tray.map(v=>money.find(m=>m[0]===v)[1]).join(" + "); };
+      app.querySelectorAll(".money button").forEach(b=>b.onclick=()=>{ tray.push(+b.dataset.v); upd(); });
+      document.getElementById("clr").onclick=()=>{ tray=[]; upd(); };
+      document.getElementById("hlp").onclick=()=>{ help=true; document.getElementById("fb").innerHTML=`<div class="feedback info">💡 Ce que le client donne − le total = la monnaie.<br>${euro(R.paid)} − ${euro(total)} = ?</div>`; };
+      document.getElementById("ok").onclick=()=>{
+        const s=tray.reduce((a,b)=>a+b,0); tries++; const fb=document.getElementById("fb");
+        if(s===due){ if(tries===1) score++; const mn=minCoins(due), best=tray.length===mn; if(best) score++;
+          det.push(`Client ${r+1} – monnaie ${euro(due)} ${tries===1?"du 1er coup ✔":"en "+tries+" essais"}${help?" (avec l'aide)":""} – ${tray.length} pièce(s)/billet(s), minimum ${mn}${best?" ⭐":""}`);
+          const tt= best?`Exact ! Et avec le moins de pièces possible : défi bonus réussi !`:`Exact ! Mais tu pouvais utiliser moins de pièces : ${mn} suffisaient.`; fb.innerHTML=`<div class="feedback good">✅ ${tt}</div>`; speak(tt);
+          app.querySelectorAll(".money button,#ok,#clr,#hlp").forEach(x=>x.disabled=true);
+          setTimeout(()=>{ if(!fb.isConnected) return; r++; r<rounds.length? show() : finish("caisse", score, rounds.length*3, det); }, 2600);
+        } else fb.innerHTML=`<div class="feedback bad">❌ Tu rends ${euro(s)}. ${s>due?"C'est trop !":"Ce n'est pas assez."} Essaie encore.</div>`;
+      };
+    }
+  }
+  show();
+}
+
+function actOrdre5(){
+  ordreGame("ordre","Remettre dans l'ordre","🔢","Les étapes sont mélangées. Clique sur les étapes dans le bon ordre : la première d'abord.",[
+   {t:"Chercher un stage", steps:["📍 Je fais la liste des magasins près de chez moi.","📄 Je prépare mon CV avec mon professeur.","👔 Je m'habille correctement.","🏪 Je vais au magasin et je demande le responsable.","🤝 Je me présente et je donne mon CV.","📞 Je dis merci et je laisse mon numéro de téléphone."]},
+   {t:"La réception d'une livraison", steps:["🚚 Le camion arrive.","🔢 Je compte les colis.","📄 Je vérifie les produits avec le bon de livraison.","✍️ Mon responsable note les problèmes sur le bon et le signe.","❄️ Je range d'abord le frais et les surgelés.","📦 Puis je range le reste dans la réserve."]},
+   {t:"Un inventaire", steps:["📋 Je prends la liste des produits à compter.","🔢 Je compte les produits du rayon.","📦 Je compte les produits de la réserve.","➕ J'additionne les deux nombres.","✍️ J'écris le total sur la liste.","✅ Je donne la liste à mon responsable."]}]);
+}
+
+const TICKET=`<div class="ticket" style="max-width:440px;white-space:nowrap"><div style="text-align:center"><b>LE PANIER MALIN</b><br>12/03/2026 – 10:42<br>Caisse 3 – Hôte : Léo</div><br>
+🍎 Pommes 1,2 kg ...... 2,40 €<br>🥛 Lait x2 .......... 2,80 €<br>🥖 Pain ............. 1,10 €<br>🏷️ Remise fidélité .. −0,50 €
+<div class="tot">TOTAL : 5,80 €</div>Espèces .......... 10,00 €<br>Rendu .............. 4,20 €<br><br><div style="text-align:center">Merci de votre visite !</div></div>`;
+function actTicket(){
+  const Q=[
+    ["Combien le client a-t-il payé en tout ?",["5,80 €","10,00 €","4,20 €"],"Le total est écrit en gros : 5,80 €."],
+    ["Comment le client a-t-il payé ?",["En espèces (billets et pièces)","Par carte","Par chèque"],"Le ticket dit « Espèces »."],
+    ["Combien l'hôte de caisse a-t-il rendu ?",["4,20 €","5,80 €","10,00 €"],"10,00 € − 5,80 € = 4,20 €."],
+    ["Quel jour le client a-t-il fait ses courses ?",["Le 12 mars 2026","Le 3 décembre 2026","Le 10 avril 2026"],"12/03/2026 : 12 = le jour, 03 = le mois de mars."],
+    ["À quelle heure ?",["10 h 42","12 h 03","3 h"],""],
+    ["Combien de lait le client a-t-il acheté ?",["2","1","3"],"« x2 » veut dire 2 fois."],
+    ["Combien pèsent les pommes ?",["1,2 kg","2,40 kg","12 kg"],""],
+    ["De combien est la remise fidélité ?",["0,50 €","5,80 €","1,10 €"],""],
+    ["Pourquoi le client doit-il garder son ticket ?",["Pour pouvoir faire un échange ou une réclamation","Pour le jeter plus tard","Pour faire un dessin"],""],
+  ].map(x=>({pre:TICKET, q:x[0], opts:x[1], good:0, explain:x[2]}));
+  app.innerHTML=`<div class="panel">${actHeader("Lire un ticket de caisse","🧾")}${consigne("Voici un ticket de caisse. Lis-le bien pour répondre aux questions.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("ticket",s,Q.length,d));
+}
+
+function actCommande(){
+  const rs=(n,k,e)=>`<div class="rs">${Array.from({length:n},(_,i)=>i<k?`<div>${e}</div>`:`<div class="vide"></div>`).join("")}</div>`;
+  const flat=(n,e)=>`<div class="flat">${Array(n).fill(`<span>${e}</span>`).join("")}</div>`;
+  const grp=(n,s,e)=>`<div class="flat" style="gap:12px">${Array.from({length:n/s},()=>`<span class="ctn">📦 ${e.repeat(s)}</span>`).join("")}</div>`;
+  numRounds({id:"commande", title:"Je passe la commande", ico:"📋", rounds:[
+    {label:"20 places, il reste 8", ans:12, cons:"Dans le rayon, il faut 20 paquets de pâtes. Il en reste 8. Combien de paquets dois-je commander ?", html:rs(20,8,"🍝"), q:"Je commande :", help:"Compte les places vides. Ou calcule : 20 − 8."},
+    {label:"12 bouteilles en cartons de 6", ans:2, cons:"Il me faut 12 bouteilles de jus. Le fournisseur vend des cartons de 6 bouteilles. Combien de cartons je commande ?", html:flat(12,"🧃"), helpVis:grp(12,6,"🧃"), q:"Je commande combien de cartons ?", help:"Fais des paquets de 6."},
+    {label:"30 yaourts, il en reste 6", ans:24, cons:"Il faut 30 yaourts dans le rayon frais. Il en reste 6. Combien de yaourts dois-je commander ?", html:rs(30,6,"🥛"), q:"Je commande :", help:"Calcule : 30 − 6."},
+    {label:"24 yaourts en paquets de 4", ans:6, cons:"Je dois commander 24 yaourts. Ils arrivent par paquets de 4. Combien de paquets je commande ?", html:flat(24,"🥛"), helpVis:grp(24,4,"🥛"), q:"Je commande combien de paquets ?", help:"Fais des paquets de 4. Compte les paquets."},
+    {label:"15 places, il reste 7", ans:8, cons:"Dans le rayon, il faut 15 boîtes de conserve. Il en reste 7. Combien de boîtes dois-je commander ?", html:rs(15,7,"🥫"), q:"Je commande :", help:"Compte les places vides. Ou calcule : 15 − 7."}]});
+}
+
+function actGaspi(){
+  const Q=[
+    {q:"📅 « À consommer jusqu'au 10 mars », c'est :", opts:["Une DLC : après cette date, on ne vend plus le produit et on ne le mange plus","Une date pour décorer","Une date sans importance"], good:0},
+    {q:"📅 « À consommer de préférence avant le 10 mars », c'est :", opts:["Une DDM : après cette date, le produit peut encore être mangé, mais il peut être un peu moins bon","Une DLC : il faut le jeter tout de suite","Le jour de la livraison"], good:0, explain:"DDM veut dire « date de durabilité minimale ». On la trouve par exemple sur les pâtes, le riz, les biscuits."},
+    {q:"🥛 Des yaourts arrivent bientôt à leur date. Le magasin peut :", opts:["Baisser le prix pour les vendre plus vite","Changer la date sur l'emballage","Les cacher"], good:0, explain:"Changer une date est interdit."},
+    {q:"🤝 Des produits encore bons ne sont pas vendus. Beaucoup de magasins :", opts:["Les donnent à des associations d'aide alimentaire","Les jettent toujours","Les cachent dans la réserve"], good:0},
+    {q:"🔄 Pour éviter le gaspillage en rayon, je mets devant :", opts:["Les produits avec la date la plus proche","Les produits avec la date la plus lointaine","Au hasard"], good:0},
+    {q:"🍎 Un fruit un peu abîmé mais encore bon :", opts:["Peut être vendu moins cher, si le magasin le décide","Est remis au milieu des beaux fruits sans rien dire","Est écrasé"], good:0},
+    {q:"🗑️ Le gaspillage alimentaire, c'est :", opts:["Jeter de la nourriture qui aurait pu être mangée","Manger trop vite","Faire les courses"], good:0},
+    {q:"📦 Le carton vide, je le mets :", opts:["Au recyclage, plié à plat","Dans l'allée","Dans le congélateur"], good:0},
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Anti-gaspi","🥕")}${consigne("Au magasin, on essaie de ne pas gaspiller. Choisis la bonne réponse.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("gaspi",s,Q.length,d));
+}
+
+function actRetrait(){
+  const P=[["👕","Tee-shirt S"],["👕","Tee-shirt M"],["👕","Tee-shirt L"],["🩳","Short M"],["🩳","Short L"],["🧦","Chaussettes"],
+           ["⚽","Ballon de foot"],["🏀","Ballon de basket"],["🏓","Raquette de ping-pong"],["🧢","Casquette"],["🎒","Sac de sport"],["👟","Baskets 40"],["👟","Baskets 42"]];
+  const orders=[{c:"Mme Roux",l:{"Tee-shirt M":2,"Short M":1,"Chaussettes":3}},
+                {c:"M. Nguyen",l:{"Baskets 42":1,"Ballon de foot":1,"Casquette":1}},
+                {c:"Lina",l:{"Tee-shirt S":1,"Tee-shirt L":1,"Raquette de ping-pong":2,"Sac de sport":1}}];
+  const ico=n=>P.find(p=>p[1]===n)[0];
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const O=orders[r], need=Object.entries(O.l), basket={}; let tries=0;
+    app.innerHTML=`<div class="panel">${actHeader(`Commande internet ${r+1} sur ${orders.length}`,"🌐")}
+      ${consigne(`${O.c} a commandé sur le site internet du magasin de sport. Il vient chercher sa commande au magasin. Prépare-la : clique sur les articles. Attention aux tailles et aux quantités !`)}
+      <div class="row" style="align-items:flex-start;gap:20px">
+        <div class="ticket" style="min-width:250px"><b>🌐 COMMANDE INTERNET</b><br>Client : ${O.c}<br>Retrait en magasin<ul id="bon" style="list-style:none;padding:0;font-size:1.05rem"></ul></div>
+        <div style="flex:1;min-width:280px"><div class="products">${P.map((p,i)=>`<button class="prod" data-i="${i}"><span class="e">${p[0]}</span>${p[1]}</button>`).join("")}</div>
+          <h3>🛍️ Mon sac</h3><div id="bk" class="tray"></div>
+          <p><button class="btn yellow" id="ok">✅ La commande est prête</button></p><div id="fb"></div></div></div></div>`;
+    const draw=()=>{
+      document.getElementById("bon").innerHTML=need.map(([n,q])=>{ const ok=(basket[n]||0)===q; return `<li class="${ok?"okl":""}">${ok?"✅":"⬜"} ${q} × ${ico(n)} ${n}</li>`; }).join("");
+      const it=Object.entries(basket).filter(([n,q])=>q>0);
+      document.getElementById("bk").innerHTML= it.length ? it.map(([n,q])=>`<span class="bki">${ico(n)} ${n} × <b>${q}</b> <button class="key" style="height:40px;width:40px" data-m="${esc(n)}" aria-label="Enlever : ${esc(n)}">➖</button></span>`).join("") : "<i>Le sac est vide.</i>";
+      document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ basket[b.dataset.m]--; draw(); });
+    };
+    app.querySelectorAll(".prod").forEach(b=>b.onclick=()=>{ const n=P[+b.dataset.i][1]; basket[n]=(basket[n]||0)+1; speak(n); draw(); });
+    document.getElementById("ok").onclick=()=>{
+      tries++; const fb=document.getElementById("fb"), errs=[];
+      need.forEach(([n,q])=>{ const h=basket[n]||0; if(h!==q) errs.push(`${ico(n)} ${n} : il en faut ${q}, tu en as ${h}.`); });
+      Object.entries(basket).forEach(([n,q])=>{ if(q>0 && !O.l[n]) errs.push(`${ico(n)} ${n} : cet article n'est pas dans la commande.`); });
+      if(!errs.length){ if(tries===1) score++; det.push(`${O.c} : commande juste ${tries===1?"du 1er coup ✔":"en "+tries+" essais"}`);
+        fb.innerHTML=`<div class="feedback good">✅ Bravo, la commande est parfaite !</div>`; speak("Bravo, la commande est parfaite !");
+        app.querySelectorAll(".prod,#ok,[data-m]").forEach(x=>x.disabled=true);
+        setTimeout(()=>{ if(!fb.isConnected) return; r++; r<orders.length?play():finish("retrait",score,orders.length,det); },2000);
+      } else { det.push(`${O.c} – essai ${tries} : ${errs.length} erreur(s)`);
+        fb.innerHTML=`<div class="feedback bad">❌ Il y a ${errs.length>1?"des erreurs":"une erreur"}. Corrige :<ul>${errs.map(e=>`<li>${e}</li>`).join("")}</ul></div>`; speak("Il y a une erreur. Regarde et corrige."); }
+    };
+    draw();
+  }
+  play();
+}
+
+function actRupture(){
+  dialogue({id:"rupture", title:"Le produit manque", ico:"🚫", who:"👨 Le client",
+    cons:"Un client cherche un produit, mais le rayon est vide. Aide-le du mieux possible. Choisis la meilleure réponse.",
+    steps:[
+      {c:"Bonjour, je cherche ce café en grains, mais le rayon est vide !", opts:["Bonjour monsieur. Je vais regarder dans la réserve, un instant s'il vous plaît.","Il n'y en a plus, au revoir.","C'est pas mon rayon."], ex:"Je cherche une solution : d'abord, je regarde dans la réserve."},
+      {n:"Tu vas voir dans la réserve. Il n'y en a plus.", opts:["Je suis désolé, il n'y en a plus. Je peux vous montrer un café qui ressemble ?","Y en a plus, partez.","(Je ne reviens pas voir le client.)"], ex:"Je reviens toujours vers le client, et je propose une autre solution."},
+      {c:"Hmm… je préfère le mien. Il revient quand ?", opts:["Je ne sais pas. Je vais demander à mon responsable.","Demain, c'est sûr ! (alors que je ne sais pas)","Jamais."], ex:"Si je ne sais pas, je ne promets rien : je demande."},
+      {n:"Ton responsable te dit : la livraison arrive jeudi.", opts:["Le café revient jeudi. Vous pourrez repasser à partir de jeudi.","Revenez un jour.","C'est jeudi, débrouillez-vous."], ex:"Je donne une information claire et juste."},
+      {c:"D'accord, merci, c'est gentil !", opts:["Avec plaisir ! Bonne journée, monsieur.","Ouais.","(Je pars.)"], ex:"Je finis poliment : le client repart content."},
+    ]});
+}
+
+function actVraiFaux(){
+  yesNo({id:"vraifaux", title:"Vrai ou faux : révisions", ico:"✅", yes:"✅ Vrai", no:"❌ Faux",
+    cons:"Révise tout ce que tu as appris dans les niveaux 1 à 4. Est-ce vrai ou faux ?",
+    items:[["🥛","Les produits avec la date la plus proche vont devant.",1,"Ils doivent être vendus en premier."],
+      ["🧊","Un surgelé décongelé peut être recongelé et revendu.",0,"Un surgelé décongelé ne doit pas être revendu."],
+      ["🦺","Je porte un carton lourd en pliant les jambes, le dos droit.",1,"C'est le bon geste pour protéger mon dos."],
+      ["📱","Pendant le travail, je peux filmer les clients.",0,"On ne filme pas les clients."],
+      ["💶","Le client donne 10 €, il doit payer 7 €. Je rends 3 €.",1,"10 − 7 = 3."],
+      ["🚪","On peut poser des cartons devant la sortie de secours.",0,"Le passage doit toujours rester libre."],
+      ["🤝","Je dis bonjour aux clients et aux collègues.",1,"La politesse, c'est avec tout le monde."],
+      ["🏷️","Le prix barré, c'est le prix que le client paie.",0,"Le prix barré, c'est l'ancien prix."],
+      ["📞","Au téléphone, si la personne n'est pas là, je prends un message.",1,"J'écris qui appelle, pour qui, le message et le numéro."],
+      ["🧼","Je me lave les mains avant de toucher les produits frais.",1,"C'est l'hygiène."],
+      ["😠","Si un client crie, je crie aussi.",0,"Je reste calme et j'appelle mon responsable."],
+      ["📏","La taille M est plus grande que la taille L.",0,"S, M, L : la taille L est plus grande que la M."]]});
+}
+
+/* ================= ZONE 4 : mini-CV ================= */
+function cvHTML(c,sm){ const li=a=>`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+  return `<div class="cv ${sm?"sm":""}" style="--cc:${c.c}"><div class="ch"><span class="ce">${c.e}</span><div><div class="cn">${esc(c.name)}</div><div>Je cherche un stage : ${esc(c.st)||"–"}</div></div></div>
+    <div class="cb"><h4>Ce que je sais faire</h4>${li(c.sf)}<h4>Mes qualités</h4>${li(c.q)}<h4>Mes loisirs</h4>${li(c.l)}</div></div>`; }
+function actCV(){
+  const st=state.students[cur]; const c=Object.assign({e:"😀",c:"#0E5C63",st:"",sf:[],q:[],l:[]}, st.cv||{}); c.name=st.name;
+  const E=["😀","😎","🦁","🐱","🐶","🦊","🐼","⭐","⚽","🎧","🌈","🚀"];
+  const C=["#0E5C63","#E5483B","#1F8A4C","#7A4FB5","#3B7DD8","#B83280","#8A5A3B","#C2410C"];
+  const ST=["Supermarché","Magasin de vêtements","Magasin de sport","Boulangerie","Drive","Magasin de jouets"];
+  const SF=["Accueillir un client","Remplir un rayon","Faire le facing","Rendre la monnaie","Prendre un message","Préparer une commande","Ranger la réserve","Trier les déchets"];
+  const Q=["Souriant","Poli","Ponctuel","Organisé","Patient","Sérieux","Curieux","Autonome","Motivé"];
+  const L=["Sport","Musique","Jeux vidéo","Dessin","Cuisine","Lecture","Danse","Animaux"];
+  const grp=(g,arr)=>`<div class="row">${arr.map(x=>`<button class="chip" data-g="${g}" data-v="${esc(x)}">${x}</button>`).join("")}</div>`;
+  app.innerHTML=`<div class="panel">${actHeader("Mon mini-CV","📄")}
+    ${consigne("Le CV sert à se présenter pour trouver un stage. Crée ton mini-CV : choisis le stage que tu cherches, 2 à 4 choses que tu sais faire, 3 qualités et jusqu'à 3 loisirs.")}
+    <div id="prev" style="margin-bottom:18px;display:flex;justify-content:center"></div>
+    <h3>Mon image</h3><div class="row">${E.map(x=>`<button class="smiley" data-g="e" data-v="${x}">${x}</button>`).join("")}</div>
+    <h3 style="margin-top:16px">Ma couleur</h3><div class="palette">${C.map(x=>`<button class="pcol" data-g="c" data-v="${x}" style="background:${x}" aria-label="couleur"></button>`).join("")}</div>
+    <h3 style="margin-top:16px">Le stage que je cherche</h3>${grp("st",ST)}
+    <h3 style="margin-top:16px">Ce que je sais faire (2 à 4)</h3>${grp("sf",SF)}
+    <h3 style="margin-top:16px">Mes qualités (3)</h3>${grp("q",Q)}
+    <h3 style="margin-top:16px">Mes loisirs (jusqu'à 3)</h3>${grp("l",L)}
+    <p><button class="btn yellow" id="sv">💾 J'enregistre mon CV</button> <button class="btn ghost small" onclick="window.print()">🖨 Imprimer</button></p><div id="fb"></div></div>`;
+  const MAX={sf:4,q:3,l:3};
+  const draw=()=>{ document.getElementById("prev").innerHTML=cvHTML(c);
+    app.querySelectorAll("[data-g]").forEach(b=>{ const g=b.dataset.g, v=b.dataset.v;
+      b.classList.toggle("sel", MAX[g] ? c[g].includes(v) : c[g]===v); }); };
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ const g=b.dataset.g, v=b.dataset.v;
+    if(MAX[g]){ if(c[g].includes(v)) c[g]=c[g].filter(x=>x!==v); else if(c[g].length<MAX[g]){ c[g].push(v); speak(v); } else toast(`Tu en as déjà choisi ${MAX[g]}. Clique sur un choix pour l'enlever.`); }
+    else { c[g]=v; if(g==="st") speak(v); }
+    draw(); });
+  document.getElementById("sv").onclick=()=>{
+    if(!c.st||c.sf.length<2||c.q.length<3){ document.getElementById("fb").innerHTML=`<div class="feedback bad">Choisis le stage, au moins 2 choses que tu sais faire et 3 qualités 🙂</div>`; return; }
+    st.cv={...c}; finish("cv",1,1,[`Stage : ${c.st} – Sait faire : ${c.sf.join(", ")} – Qualités : ${c.q.join(", ")}`],"Super CV ! Il est enregistré. Tu peux l'imprimer depuis cette page.",`<div style="display:flex;justify-content:center;margin-top:18px">${cvHTML(st.cv)}</div><p class="noprint" style="margin-top:12px"><button class="btn ghost small" onclick="window.print()">🖨 Imprimer mon CV</button></p>`);
+  };
+  draw();
+}
+
+/* ================= ZONE 5 : le grand défi ================= */
+function actDefi(){
+  const POOL=[
+    ["Le CAP Équipier polyvalent du commerce dure :",["2 ans","6 mois","5 ans"],""],
+    ["Pour demander un stage, j'apporte :",["Mon CV","Mon ticket de caisse","Rien"],""],
+    ["À l'entretien, je commence par :",["Dire bonjour et me présenter","M'asseoir sans rien dire","Demander le salaire"],""],
+    ["« À consommer jusqu'au… », c'est :",["Une DLC","Une DDM","Une promotion"],""],
+    ["Des produits encore bons ne sont pas vendus. Beaucoup de magasins :",["Les donnent à des associations","Les cachent","Les jettent toujours"],""],
+    ["Il faut 20 produits. Il en reste 8. Je commande :",["12","28","8"],"20 − 8 = 12"],
+    ["Il me faut 12 bouteilles. Cartons de 6. Je commande :",["2 cartons","6 cartons","12 cartons"],""],
+    ["Total 5,80 €. Le client donne 10 €. Je rends :",["4,20 €","5,20 €","15,80 €"],"10 − 5,80 = 4,20"],
+    ["Pour rendre 3,50 €, le moins de pièces possible, c'est :",["2 € + 1 € + 50 c","1 € + 1 € + 1 € + 50 c","Sept pièces de 50 c"],""],
+    ["Une commande internet avec « Tee-shirt M ». Je prends :",["Le tee-shirt taille M","N'importe quelle taille","Le tee-shirt taille L"],""],
+    ["Le rayon est vide et le client cherche le produit. D'abord, je :",["Regarde dans la réserve","Dis au revoir","Fais semblant de ne pas entendre"],""],
+    ["Je ne sais pas quand le produit revient. Je :",["Demande à mon responsable","Invente une date","Dis jamais"],""],
+    ["Sur un ticket, « x2 » veut dire :",["2 fois","2 euros","2 kilos"],""],
+    ["Je travaille seul, sans qu'on me dise tout : je suis :",["Autonome","En retard","En pause"],""],
+    ["L'argent que je reçois pour mon travail, c'est :",["Le salaire","La remise","Le ticket"],""],
+    ["Les produits avec la date la plus proche vont :",["Devant","Au fond","À la poubelle"],""],
+    ["Je fais tomber un pot qui se casse. D'abord :",["Je préviens pour que personne ne glisse","Je pars","Je le cache"],""],
+    ["Un client crie. Je :",["Reste calme et j'appelle mon responsable","Crie aussi","Pars"],""],
+    ["Après le CAP, on peut continuer avec :",["Un bac pro Métiers du commerce et de la vente","Rien","Seulement l'université"],""],
+    ["À la fin de l'entretien, je dis :",["Merci, bonne journée !","Salut !","Rien"],""],
+  ];
+  const Q=pickN(POOL,15).map(x=>({q:x[0], opts:x[1], good:0, explain:x[2]}));
+  app.innerHTML=`<div class="panel">${actHeader("Le grand défi final","🏆")}${consigne("C'est le grand défi final ! 15 questions sur tout ce que tu as appris. Bonne chance !")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("defi",s,Q.length,d));
+}
+
+/* ================= Diplôme ================= */
+function screenDiplome(){
+  const st=state.students[cur]; window.scrollTo(0,0);
+  app.innerHTML=`<div class="panel" style="text-align:center;border:10px double var(--teal)">
+    <div style="font-size:4rem">🎓</div><h2>Diplôme de l'équipier expert – Niveau 5</h2><p>Bravo à</p>
+    <p style="font-family:var(--title);font-size:2.4rem;margin:0">${esc(st.name)}</p>
+    <p>qui a terminé les ${ACTS.length} activités du magasin.</p>
+    <p>Le ${new Date().toLocaleDateString("fr-FR")}</p><p><b>${esc(NOM_ENSEIGNANTE)}</b></p>
+    <p class="row noprint" style="justify-content:center"><button class="btn yellow" onclick="window.print()">🖨 Imprimer</button><button class="btn ghost" onclick="screenHome()">⬅ Retour au magasin</button></p></div>`;
+  burst(); speak("Bravo "+st.name+" ! Tu as ton diplôme d'équipier expert, niveau 5.");
+}
+
+/* ================= ZONE 4 : coloriage ================= */
+const DRAWINGS = {
+  col_sport: { t:"Le magasin de sport", svg:`
+    <rect data-r="mur" x="0" y="0" width="400" height="262"/>
+    <rect data-r="sol" x="0" y="262" width="400" height="58"/>
+    <rect data-r="enseigne" x="130" y="10" width="140" height="36" rx="8"/>
+    <text class="svgline" x="200" y="35" text-anchor="middle" font-family="Verdana" font-size="18" font-weight="bold">SPORT</text>
+    <circle data-r="ballonfoot" cx="60" cy="98" r="22"/>
+    <polygon class="svgline" points="60,90 68,96 65,105 55,105 52,96" fill="#222"/>
+    <circle data-r="ballonbasket" cx="120" cy="98" r="22"/>
+    <path class="svgline" d="M98 98 h44 M120 76 v44 M104 82 q16 16 0 32 M136 82 q-16 16 0 32" fill="none" stroke="#222" stroke-width="2"/>
+    <ellipse data-r="raquette" cx="185" cy="80" rx="16" ry="22"/>
+    <rect data-r="manche" x="181" y="101" width="8" height="18"/>
+    <path data-r="maillot" d="M240 64 h40 l16 16 l-10 10 l-8 -8 v36 h-36 v-36 l-8 8 l-10 -10 z"/>
+    <text class="svgline" x="260" y="108" text-anchor="middle" font-family="Verdana" font-size="16" font-weight="bold">10</text>
+    <path data-r="casquette" d="M318 114 q22 -40 44 0 z"/>
+    <ellipse data-r="visiere" cx="368" cy="114" rx="14" ry="4"/>
+    <rect data-r="etagere1" x="20" y="120" width="360" height="10"/>
+    <path data-r="chaussure1" d="M40 200 v-22 h22 l10 12 h28 q8 0 8 10 z"/>
+    <path data-r="chaussure2" d="M120 200 v-22 h22 l10 12 h28 q8 0 8 10 z"/>
+    <rect data-r="barre" x="220" y="182" width="60" height="8"/>
+    <rect data-r="poids1" x="208" y="170" width="14" height="32" rx="3"/>
+    <rect data-r="poids2" x="278" y="170" width="14" height="32" rx="3"/>
+    <rect data-r="sac" x="310" y="166" width="60" height="38" rx="8"/>
+    <path class="svgline" d="M322 166 q18 -22 36 0" fill="none" stroke="#222" stroke-width="3"/>
+    <rect data-r="etagere2" x="20" y="204" width="360" height="10"/>
+    <circle data-r="ballon2" cx="340" cy="282" r="16"/>` },
+  col_jouets: { t:"Le magasin de jouets", svg:`
+    <rect data-r="mur" x="0" y="0" width="400" height="262"/>
+    <rect data-r="sol" x="0" y="262" width="400" height="58"/>
+    <rect data-r="enseigne" x="130" y="10" width="140" height="36" rx="8"/>
+    <text class="svgline" x="200" y="35" text-anchor="middle" font-family="Verdana" font-size="18" font-weight="bold">JOUETS</text>
+    <circle data-r="oreille1" cx="68" cy="128" r="11"/><circle data-r="oreille2" cx="112" cy="128" r="11"/>
+    <ellipse data-r="bras1" cx="54" cy="205" rx="10" ry="22"/><ellipse data-r="bras2" cx="126" cy="205" rx="10" ry="22"/>
+    <ellipse data-r="ventre" cx="90" cy="212" rx="34" ry="42"/>
+    <ellipse data-r="pied1" cx="70" cy="256" rx="15" ry="8"/><ellipse data-r="pied2" cx="110" cy="256" rx="15" ry="8"/>
+    <circle data-r="tete" cx="90" cy="152" r="28"/>
+    <ellipse data-r="museau" cx="90" cy="162" rx="11" ry="8"/>
+    <circle class="svgline" cx="80" cy="146" r="3" fill="#222"/><circle class="svgline" cx="100" cy="146" r="3" fill="#222"/><circle class="svgline" cx="90" cy="159" r="3" fill="#222"/>
+    <rect data-r="etagere" x="230" y="150" width="160" height="8"/>
+    <rect data-r="toit" x="270" y="104" width="50" height="20" rx="6"/>
+    <rect data-r="voiture" x="250" y="122" width="90" height="26" rx="8"/>
+    <circle data-r="roue1" cx="272" cy="150" r="10"/><circle data-r="roue2" cx="320" cy="150" r="10"/>
+    <rect data-r="cube1" x="170" y="222" width="40" height="40"/>
+    <rect data-r="cube2" x="210" y="222" width="40" height="40"/>
+    <rect data-r="cube3" x="190" y="182" width="40" height="40"/>
+    <text class="svgline" x="190" y="250" text-anchor="middle" font-family="Verdana" font-size="20" font-weight="bold">A</text>
+    <text class="svgline" x="230" y="250" text-anchor="middle" font-family="Verdana" font-size="20" font-weight="bold">B</text>
+    <text class="svgline" x="210" y="210" text-anchor="middle" font-family="Verdana" font-size="20" font-weight="bold">C</text>
+    <circle data-r="balle" cx="320" cy="240" r="22"/>
+    <path class="svgline" d="M298 240 q22 -14 44 0" fill="none" stroke="#222" stroke-width="2.5"/>` }
+};
+function drawingSVG(id, fills){
+  const tmp=document.createElement("div");
+  tmp.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320">${DRAWINGS[id].svg}</svg>`;
+  tmp.querySelectorAll("[data-r]").forEach(el=>{ el.setAttribute("fill",(fills||{})[el.dataset.r]||"#ffffff"); el.setAttribute("stroke","#222"); el.setAttribute("stroke-width","2.5"); });
+  return tmp.innerHTML;
+}
+function actColor(id){
+  const st=state.students[cur]; const fills = Object.assign({}, st.colors[id]||{});
+  const pal=[["#E5483B","rouge"],["#F28C28","orange"],["#FFD43B","jaune"],["#9BD770","vert clair"],["#1F8A4C","vert"],["#8FD3F4","bleu ciel"],["#3B7DD8","bleu"],["#7A4FB5","violet"],["#F4A6C6","rose"],["#8A5A3B","marron"],["#9AA5A8","gris"],["#222222","noir"],["#ffffff","blanc (gomme)"]];
+  let color=pal[0][0];
+  app.innerHTML = `<div class="panel">${actHeader("Coloriage : "+DRAWINGS[id].t, id==="col_shop"?"🏪":"🎨")}
+    ${consigne("Choisis une couleur, puis clique sur une partie du dessin pour la colorier. Ton coloriage est enregistré.")}
+    <div class="palette">${pal.map((p,i)=>`<button class="pcol ${i===0?"sel":""}" data-c="${p[0]}" data-say="${p[1]}" style="background:${p[0]}" aria-label="${p[1]}"></button>`).join("")}</div>
+    <div class="colorbox" id="cb">${drawingSVG(id,fills)}</div>
+    <p class="row" style="justify-content:center;margin-top:16px"><button class="btn yellow" id="fin">✅ J'ai fini mon coloriage</button><button class="btn ghost small" id="clr">🧽 Tout effacer</button></p></div>`;
+  const persist=()=>{ st.colors[id]=fills; save(false); };
+  app.querySelectorAll(".pcol").forEach(b=>b.addEventListener("click",()=>{ color=b.dataset.c; app.querySelectorAll(".pcol").forEach(x=>x.classList.toggle("sel",x===b)); }));
+  const bindSvg=()=>document.querySelectorAll("#cb [data-r]").forEach(el=>el.addEventListener("click",()=>{ el.setAttribute("fill",color); fills[el.dataset.r]=color; persist(); }));
+  bindSvg();
+  document.getElementById("clr").onclick=()=>{ if(!confirm("Tout effacer ?")) return; for(const k in fills) delete fills[k]; persist(); document.getElementById("cb").innerHTML=drawingSVG(id,fills); bindSvg(); };
+  document.getElementById("fin").onclick=()=>{ persist(); finish(id,1,1,[`${Object.keys(fills).length} zones coloriées`],"Magnifique coloriage ! Il est enregistré."); };
+}
+
+/* ================= Sortie : avis ================= */
+function actAvis(){
+  const st=state.students[cur]; const a = Object.assign({humeur:"",prefere:"",plait:"",appris:""}, st.avis||{});
+  const pick=(group,val)=>{ a[group]=val; app.querySelectorAll(`[data-g="${group}"]`).forEach(b=>b.classList.toggle("sel", b.dataset.v===val)); };
+  app.innerHTML = `<div class="panel">${actHeader("Mon avis","📝")}
+    ${consigne("Dis-nous ce que tu as pensé de ta découverte.")}
+    <h3>Comment je me sens ? ${sayBtn("Comment je me sens ?")}</h3>
+    <div class="smileys">${["😀","🙂","😐","🙁"].map(e=>`<button class="smiley" data-g="humeur" data-v="${e}">${e}</button>`).join("")}</div>
+    <h3 style="margin-top:20px">Mon jeu préféré ${sayBtn("Mon jeu préféré")}</h3>
+    <div class="row">${ACTS.filter(x=>x.id!=="avis").map(x=>`<button class="chip" data-g="prefere" data-v="${esc(x.lbl)}">${x.ico} ${x.lbl}</button>`).join("")}</div>
+    <h3 style="margin-top:20px">Ce métier me plaît ? ${sayBtn("Ce métier me plaît ?")}</h3>
+    <div class="row">${["👍 Oui","🤏 Un peu","👎 Non"].map(v=>`<button class="chip" data-g="plait" data-v="${v}">${v}</button>`).join("")}</div>
+    <h3 style="margin-top:20px"><label for="ap">Ce que j'ai appris (un mot ou une phrase)</label> ${sayBtn("Ce que j'ai appris. Tu peux écrire un mot ou une phrase.")}</h3>
+    <textarea id="ap">${esc(a.appris)}</textarea>
+    <p><button class="btn yellow" id="sv">💾 J'enregistre mon avis</button></p><div id="fb"></div></div>`;
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>pick(b.dataset.g,b.dataset.v));
+  ["humeur","prefere","plait"].forEach(g=>a[g]&&pick(g,a[g]));
+  document.getElementById("sv").onclick=()=>{
+    a.appris=document.getElementById("ap").value.trim();
+    if(!a.humeur||!a.prefere||!a.plait){ document.getElementById("fb").innerHTML=`<div class="feedback bad">Réponds aux 3 premières questions 🙂</div>`; return; }
+    a.date=new Date().toLocaleString("fr-FR"); st.avis=a; save(); burst();
+    app.innerHTML=`<div class="panel result"><h2>Merci ${esc(st.name)} ! 💛</h2><p>Ton avis est enregistré.</p><button class="btn yellow" onclick="screenHome()">🛒 Retour au magasin</button></div>`;
+  };
+}
+
+/* ================= Espace enseignante (calque, accessible à tout moment) ================= */
+let tSel=null;
+const TL=()=>document.getElementById("tlayer");
+function closeTeacher(){ TL().hidden=true; TL().innerHTML=""; document.body.classList.remove("tl"); }
+function openTeacher(){
+  const L=TL(); L.hidden=false; document.body.classList.add("tl");
+  L.innerHTML=`<div class="panel tch" style="max-width:520px"><h2>🔒 Espace enseignante</h2>
+    <p>Le travail de l'élève n'est pas interrompu.</p>
+    <p><label for="cd">Code d'accès</label><br><input type="password" id="cd" autocomplete="off"> <button class="btn" id="go">Entrer</button></p>
+    <div id="cfb"></div><button class="btn ghost small" onclick="closeTeacher()">✖ Fermer</button></div>`;
+  const go=()=>{ if(document.getElementById("cd").value===CODE_PAR_DEFAUT){ tSel=cur||tSel; renderTeacher(); } else document.getElementById("cfb").innerHTML=`<div class="feedback bad">Code incorrect.</div>`; };
+  document.getElementById("go").onclick=go; document.getElementById("cd").onkeydown=e=>{ if(e.key==="Enter") go(); };
+  document.getElementById("cd").focus();
+}
+function renderTeacher(){
+  state = Object.assign(state, load()); // relit la dernière sauvegarde
+  const S=state.students, ids=Object.keys(S);
+  if(!tSel||!S[tSel]) tSel=ids[0]||null;
+  const total=k=>ACTS.filter(a=>isDone(S[k],a)).length;
+  const enCours=k=>Object.keys(S[k].progress||{}).map(id=>ACTS.find(a=>a.id===id)?.lbl).filter(Boolean).join(", ")||"–";
+  const cell=(st,a)=>{
+    let out="";
+    const p=(st.progress||{})[a.id];
+    if(a.id==="avis"){ const v=st.avis; out = v?`${v.humeur} ${esc(v.plait)}<br><small>${esc(v.date)}</small>`:"–"; }
+    else if(a.id==="poste"){ const r=st.results[a.id]; out = st.poste ? `<b>${esc(st.poste)}</b>`+(r?`<br><small>${esc(r.date)}</small>`:"") : "–"; }
+    else if(a.id==="cv"){ const r=st.results[a.id]; out = st.cv ? cvHTML(st.cv,true)+(r?`<br><small>${esc(r.date)}</small>`:"") : "–"; }
+    else if(a.z==="z4"){ const r=st.results[a.id]; out = (st.colors[a.id]?drawingSVG(a.id,st.colors[a.id]):"–") + (r?`<br><small>Terminé – ${esc(r.date)}</small>`:(st.colors[a.id]?"<br><small>En cours</small>":"")); }
+    else { const r=st.results[a.id];
+      if(!r) out="–";
+      else if(a.id==="badge") out=`${st.badge?st.badge.emoji:""} Créé<br><small>${esc(r.date)}</small>`;
+      else out=`<b>${r.score}/${r.max}</b> (meilleur : ${r.best})<br><small>${r.attempts} essai(s) terminé(s) – ${esc(r.date)}</small>
+        <details><summary>Détail du dernier essai</summary><ul>${r.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></details>`; }
+    if(p && a.z!=="z4") out+=`<div class="live">⏳ En cours (${p.details.length} réponse(s)) – ${esc(p.date)}
+      <details><summary>Voir</summary><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></details></div>`;
+    return out; };
+  const st = tSel ? S[tSel] : null;
+  TL().innerHTML=`<div class="panel tch">
+    <div class="row" style="justify-content:space-between"><h2>📋 Suivi des élèves</h2>
+      <div class="row noprint"><button class="btn small" onclick="renderTeacher()">🔄 Actualiser</button><button class="btn ghost small" onclick="closeTeacher()">✖ Fermer et revenir</button></div></div>
+    ${ids.length===0?`<p>Aucun élève n'a encore commencé.</p>`:`
+    <div class="tablebox"><table><thead><tr><th>Élève</th><th>Jeux terminés</th><th>En cours</th></tr></thead><tbody>
+      ${ids.map(k=>`<tr><td><button class="stu ${k===tSel?"sel":""}" onclick="tSel='${k}';renderTeacher()">${esc(S[k].name)}</button>${k===cur?" <small>(connecté)</small>":""}</td><td>${total(k)} / ${ACTS.length}</td><td>${esc(enCours(k))}</td></tr>`).join("")}
+    </tbody></table></div>
+    <h3 style="margin-top:22px">Détail : ${esc(st.name)}</h3>
+    <div class="tablebox"><table><thead><tr><th>Activité</th><th>Résultat</th></tr></thead><tbody>
+      ${ZONES.map(z=>`<tr class="z"><td colspan="2">${z.t}</td></tr>`+ACTS.filter(a=>a.z===z.id).map(a=>`<tr><td>${a.ico} ${a.lbl}</td><td>${cell(st,a)}</td></tr>`).join("")).join("")}
+      <tr><td>Jeu préféré</td><td>${esc(st.avis?.prefere||"–")}</td></tr>
+      <tr><td>Ce que j'ai appris</td><td>${esc(st.avis?.appris||"–")}</td></tr>
+    </tbody></table></div>`}
+    <div class="noprint">
+      <h3 style="margin-top:24px">Actions</h3>
+      <div class="row">
+        <button class="btn small" onclick="window.print()">🖨 Imprimer</button>
+        <button class="btn small" onclick="exportData()">⬇ Télécharger une sauvegarde</button>
+        ${st?`<button class="btn ghost small" onclick="resetStudent('${tSel}')">♻ Supprimer ${esc(st.name)}</button>`:""}
+      </div>
+      <p><button class="btn ghost small" onclick="speak('Test de la voix. Bonjour, bienvenue dans le magasin.')">🔊 Tester la voix de l'ordinateur</button></p>
+    </div></div>`;
+}
+function resetStudent(k){
+  if(!confirm("Supprimer tout le travail de "+state.students[k].name+" ? Cette action est définitive.")) return;
+  delete state.students[k]; save(); tSel=null;
+  if(k===cur){ closeTeacher(); screenLogin(); } else renderTeacher();
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="suivi-immersion-EPC-"+new Date().toISOString().slice(0,10)+".json"; a.click();
+}
+
+drawMute();
+screenLogin();
+</script>
+</body>
+</html>
